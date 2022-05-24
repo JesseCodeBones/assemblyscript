@@ -19,3 +19,23 @@ function typeNone<void>():void{}
 
 // 1005: ')' expected.
 function functionforgetcomma(this: ()=>void a: i32):void {}
+
+function trycatchFunction(): void {
+  try {
+  }
+  catch (exception_var) {
+  }
+  finally {
+  }
+}
+// ERROR 1003: "Identifier expected."
+function deeperFunction<void>():void{{++a;}}
+// ERROR 1003: "Identifier expected."
+function identifierFunction<void>():void{var a = 0;}
+// ERROR 1003: "Identifier expected."
+function stringFunction<void>():void{"string"}
+// ERROR 1005: "'(' expected."
+function backtick Function<void>():void{`${a}bc`}
+// ERROR 1003: "Identifier expected."
+// ERROR 1351: "An identifier or keyword cannot immediately follow a numeric literal."
+function deeperFunction<void>():void{1.23f}
