@@ -6,4 +6,4 @@
 x => x;
 (b ? x : y);
 (b ? f : g)();
-// ERROR 1005: "')' expected." in arrow-functions.ts(13,5+3)
+// ERROR 1005: "':' expected." in arrow-functions.ts(13,10+1)

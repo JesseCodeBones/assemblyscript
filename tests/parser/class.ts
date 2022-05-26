@@ -37,4 +37,19 @@ export class Invalid<T> {
   // 1031: 'declare' modifier cannot appear on class elements of this kind.
   // 1183: An implementation cannot be declared in ambient contexts.
   declare declareMethod(): i32 {}
+
+
+  readonly get name():i32 {}
+
+
+  readonly set name():i32 {}
+
+
+  static constructor(a: i32) {}
+
+
+  abstract constructor(a: i32) {}
+
+
+  readonly constructor(a: i32) {}
 }

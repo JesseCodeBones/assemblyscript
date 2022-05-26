@@ -39,3 +39,68 @@ function backtick Function<void>():void{`${a}bc`}
 // ERROR 1003: "Identifier expected."
 // ERROR 1351: "An identifier or keyword cannot immediately follow a numeric literal."
 function deeperFunction<void>():void{1.23f}
+
+function errorTrycatchFunction(): void {
+  // ERROR 1005: "'(' expected."
+  try {
+  }
+  catch  {
+  }
+  finally {
+  }
+  // ERROR 1003: "Identifier expected."
+  try {
+  }
+  catch (var) {
+  }
+  finally {
+  }
+  // ERROR 1005: "'{' expected."
+  try {
+  }
+  catch (exception_var) 
+  finally {
+  }
+  // ERROR 1005: "'(' expected."
+  try {
+  } catch
+  // ERROR 1005: "'{' expected."
+  try {
+  }
+  catch (exception_var) {}
+  finally()
+  // ERROR 1005: "'{' expected."
+  try(a())
+  // ERROR 1005: "'catch' expected."
+  try{a()}
+}
+
+function switchError(i: i32): void{
+
+  switch(i) { 
+    case constant-expression1: { 
+       break; 
+    } 
+    default: { 
+       break; 
+    } 
+  } 
+
+  switch {i} {
+
+  }
+
+  switch (i) []
+
+}
+
+function ifError(i: i32): void{
+
+  if {i}
+
+}
+
+function doError(i: i32): void{
+
+  do {}
+}
