@@ -58,3 +58,7 @@ class N {
 class O {
   readonly [()=>string: i32]: f64;
 }
+// ERROR 1005: "']' expected."
+class P {
+  [key: i32 : f64;
+}

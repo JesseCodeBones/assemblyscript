@@ -53,3 +53,9 @@ export class Invalid<T> {
 
   readonly constructor(a: i32) {}
 }
+
+
+export abstract class Invalid<T> { 
+  // ERROR 1245: "Method 'constructor' cannot have an implementation because it is marked abstract."
+  abstract constructor(a: i32) {}
+}
