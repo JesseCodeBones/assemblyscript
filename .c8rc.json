@@ -1,7 +1,8 @@
 {
     "reporter": [
         "html",
-        "text"
+        "text",
+        "cobertura"
     ],
     "reportsDirectory": "./coverage",
     "src": [

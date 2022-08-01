@@ -184,7 +184,7 @@ async function runTest(basename) {
     const cmd = [
       basename + ".ts",
       "--baseDir", basedir,
-      "--debug",
+      //"--debug",
       "--textFile" // -> stdout
     ];
     if (asc_flags) cmd.push(...asc_flags);
@@ -241,14 +241,16 @@ async function runTest(basename) {
       const expected = fs.readFileSync(path.join(basedir, basename + ".debug.wat"), { encoding: "utf8" }).replace(/\r\n/g, "\n");
       if (args.noDiff) {
         if (expected != actual) {
+          fs.writeFileSync("/home/jesse/temp/temp_fixture.log", actual);
           compareFixture.end(FAILURE);
           return prepareResult(FAILURE, "fixture mismatch");
         }
       } else {
         let diffs = diff(basename + ".debug.wat", expected, actual);
         if (diffs !== null) {
-          console.log(diffs);
+          //console.log(diffs);
           compareFixture.end(FAILURE);
+          fs.writeFileSync("/home/jesse/temp/temp.log", actual);
           return prepareResult(FAILURE, "fixture mismatch");
         }
       }
@@ -561,6 +563,7 @@ if (args.parallel && coreCount > 2) {
 } else {
   let failedTests = new Map();
   let skippedTests = new Map();
+
   for (const test of getTests()) {
     const { code, message } = await runTest(test);
     switch (code) {
@@ -570,5 +573,16 @@ if (args.parallel && coreCount > 2) {
       default: new Error(`invalid code: ${code}`);
     }
   }
+
+  // let test = "simd";
+  // const { code, message } = await runTest(test);
+  // switch (code) {
+  //   case SUCCESS: break;
+  //   case FAILURE: failedTests.set(test, message); break;
+  //   case SKIPPED: skippedTests.set(test, message); break;
+  //   default: new Error(`invalid code: ${code}`);
+  // }
+
+
   evaluateResult(failedTests, skippedTests);
 }

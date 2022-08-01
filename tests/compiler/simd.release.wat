@@ -1,7 +1,7 @@
 (module
+ (type $none_=>_none (func))
  (type $i32_i32_i32_=>_v128 (func (param i32 i32 i32) (result v128)))
  (type $i32_i32_=>_none (func (param i32 i32)))
- (type $none_=>_none (func))
  (type $i32_i32_=>_i32 (func (param i32 i32) (result i32)))
  (type $i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32)))
  (type $i32_i32_i32_=>_none (func (param i32 i32 i32)))
@@ -134,37 +134,37 @@
    local.get $4
    i32.store offset=4
   end
-  local.get $2
+  local.get $1
+  local.get $0
   local.get $3
   i32.const 4
   i32.shl
+  local.get $2
   i32.add
   i32.const 2
   i32.shl
-  local.get $0
   i32.add
   i32.load offset=96
-  local.get $1
   i32.eq
   if
-   local.get $2
+   local.get $0
    local.get $3
    i32.const 4
    i32.shl
+   local.get $2
    i32.add
    i32.const 2
    i32.shl
-   local.get $0
    i32.add
    local.get $5
    i32.store offset=96
    local.get $5
    i32.eqz
    if
+    local.get $0
     local.get $3
     i32.const 2
     i32.shl
-    local.get $0
     i32.add
     local.tee $1
     i32.load offset=4
@@ -315,12 +315,12 @@
    call $~lib/builtins/abort
    unreachable
   end
-  local.get $2
+  local.get $4
   local.get $1
   i32.const 4
   i32.add
+  local.get $2
   i32.add
-  local.get $4
   i32.ne
   if
    i32.const 0
@@ -381,14 +381,14 @@
    call $~lib/builtins/abort
    unreachable
   end
-  local.get $2
+  local.get $0
   local.get $5
   i32.const 4
   i32.shl
+  local.get $2
   i32.add
   i32.const 2
   i32.shl
-  local.get $0
   i32.add
   i32.load offset=96
   local.set $3
@@ -404,14 +404,14 @@
    local.get $1
    i32.store offset=4
   end
-  local.get $2
+  local.get $0
   local.get $5
   i32.const 4
   i32.shl
+  local.get $2
   i32.add
   i32.const 2
   i32.shl
-  local.get $0
   i32.add
   local.get $1
   i32.store offset=96
@@ -423,10 +423,10 @@
   i32.shl
   i32.or
   i32.store
+  local.get $0
   local.get $5
   i32.const 2
   i32.shl
-  local.get $0
   i32.add
   local.tee $0
   local.get $0
@@ -463,11 +463,11 @@
   i32.load offset=1568
   local.tee $4
   if
-   local.get $1
    local.get $4
    i32.const 4
    i32.add
-   i32.lt_u
+   local.get $1
+   i32.gt_u
    if
     i32.const 0
     i32.const 1056
@@ -476,10 +476,10 @@
     call $~lib/builtins/abort
     unreachable
    end
-   local.get $4
    local.get $1
    i32.const 16
    i32.sub
+   local.get $4
    i32.eq
    if
     local.get $4
@@ -491,11 +491,11 @@
     local.set $1
    end
   else
-   local.get $1
    local.get $0
    i32.const 1572
    i32.add
-   i32.lt_u
+   local.get $1
+   i32.gt_u
    if
     i32.const 0
     i32.const 1056
@@ -534,10 +534,10 @@
   local.get $1
   i32.const 0
   i32.store offset=8
-  local.get $2
   local.get $1
   i32.const 4
   i32.add
+  local.get $2
   i32.add
   local.tee $2
   i32.const 2
@@ -594,10 +594,10 @@
      i32.const 16
      i32.lt_u
      if
-      local.get $1
       local.get $0
       i32.const 4
       i32.shl
+      local.get $1
       i32.add
       i32.const 2
       i32.shl
@@ -640,13 +640,13 @@
    i32.shr_u
   else
    i32.const 31
+   local.get $1
    i32.const 1
    i32.const 27
    local.get $1
    i32.clz
    i32.sub
    i32.shl
-   local.get $1
    i32.add
    i32.const 1
    i32.sub
@@ -686,10 +686,10 @@
    call $~lib/builtins/abort
    unreachable
   end
+  local.get $0
   local.get $2
   i32.const 2
   i32.shl
-  local.get $0
   i32.add
   i32.load offset=4
   i32.const -1
@@ -698,6 +698,7 @@
   i32.and
   local.tee $1
   if (result i32)
+   local.get $0
    local.get $1
    i32.ctz
    local.get $2
@@ -706,7 +707,6 @@
    i32.add
    i32.const 2
    i32.shl
-   local.get $0
    i32.add
    i32.load offset=96
   else
@@ -720,12 +720,12 @@
    i32.and
    local.tee $1
    if (result i32)
+    local.get $0
     local.get $1
     i32.ctz
     local.tee $1
     i32.const 2
     i32.shl
-    local.get $0
     i32.add
     i32.load offset=4
     local.tee $2
@@ -738,6 +738,7 @@
      call $~lib/builtins/abort
      unreachable
     end
+    local.get $0
     local.get $2
     i32.ctz
     local.get $1
@@ -746,7 +747,6 @@
     i32.add
     i32.const 2
     i32.shl
-    local.get $0
     i32.add
     i32.load offset=96
    else
@@ -799,6 +799,7 @@
    i32.sub
    i32.ne
    i32.shl
+   local.get $3
    i32.const 1
    i32.const 27
    local.get $3
@@ -807,7 +808,6 @@
    i32.shl
    i32.const 1
    i32.sub
-   local.get $3
    i32.add
    local.get $3
    local.get $3
@@ -860,12 +860,12 @@
     unreachable
    end
   end
+  local.get $3
   local.get $1
   i32.load
   i32.const -4
   i32.and
-  local.get $3
-  i32.lt_u
+  i32.gt_u
   if
    i32.const 0
    i32.const 1056
@@ -903,16 +903,16 @@
   i32.ge_u
   if
    local.get $1
+   local.get $3
    local.get $4
    i32.const 2
    i32.and
-   local.get $3
    i32.or
    i32.store
-   local.get $3
    local.get $1
    i32.const 4
    i32.add
+   local.get $3
    i32.add
    local.tee $3
    local.get $2
@@ -997,137 +997,7 @@
   local.get $1
   call $~lib/rt/tlsf/insertBlock
  )
- (func $simd/test_vars_i8x16_partial (param $0 i32) (param $1 i32) (param $2 i32) (result v128)
-  v128.const i32x4 0x03000100 0x07000504 0x0b0a0908 0x000e0d0c
-  local.get $0
-  i8x16.replace_lane 2
-  local.get $1
-  i8x16.replace_lane 6
-  local.get $2
-  i8x16.replace_lane 15
- )
- (func $simd/test_vars_i8x16_full (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (param $5 i32) (param $6 i32) (param $7 i32) (param $8 i32) (param $9 i32) (param $10 i32) (param $11 i32) (param $12 i32) (param $13 i32) (param $14 i32) (param $15 i32) (result v128)
-  local.get $0
-  i8x16.splat
-  local.get $1
-  i8x16.replace_lane 1
-  local.get $2
-  i8x16.replace_lane 2
-  local.get $3
-  i8x16.replace_lane 3
-  local.get $4
-  i8x16.replace_lane 4
-  local.get $5
-  i8x16.replace_lane 5
-  local.get $6
-  i8x16.replace_lane 6
-  local.get $7
-  i8x16.replace_lane 7
-  local.get $8
-  i8x16.replace_lane 8
-  local.get $9
-  i8x16.replace_lane 9
-  local.get $10
-  i8x16.replace_lane 10
-  local.get $11
-  i8x16.replace_lane 11
-  local.get $12
-  i8x16.replace_lane 12
-  local.get $13
-  i8x16.replace_lane 13
-  local.get $14
-  i8x16.replace_lane 14
-  local.get $15
-  i8x16.replace_lane 15
- )
- (func $simd/test_vars_i16x8_partial (param $0 i32) (param $1 i32) (param $2 i32) (result v128)
-  v128.const i32x4 0x00010000 0x00030000 0x00050000 0x00000006
-  local.get $0
-  i16x8.replace_lane 2
-  local.get $1
-  i16x8.replace_lane 4
-  local.get $2
-  i16x8.replace_lane 7
- )
- (func $simd/test_vars_i16x8_full (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (param $5 i32) (param $6 i32) (param $7 i32) (result v128)
-  local.get $0
-  i16x8.splat
-  local.get $1
-  i16x8.replace_lane 1
-  local.get $2
-  i16x8.replace_lane 2
-  local.get $3
-  i16x8.replace_lane 3
-  local.get $4
-  i16x8.replace_lane 4
-  local.get $5
-  i16x8.replace_lane 5
-  local.get $6
-  i16x8.replace_lane 6
-  local.get $7
-  i16x8.replace_lane 7
- )
- (func $simd/test_vars_i32x4_partial (param $0 i32) (param $1 i32) (param $2 i32) (result v128)
-  v128.const i32x4 0x00000000 0x00000000 0x00000000 0x00000000
-  local.get $0
-  i32x4.replace_lane 1
-  local.get $1
-  i32x4.replace_lane 2
-  local.get $2
-  i32x4.replace_lane 3
- )
- (func $simd/test_vars_i32x4_full (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (result v128)
-  local.get $0
-  i32x4.splat
-  local.get $1
-  i32x4.replace_lane 1
-  local.get $2
-  i32x4.replace_lane 2
-  local.get $3
-  i32x4.replace_lane 3
- )
- (func $simd/test_vars_i64x2_partial (param $0 i64) (result v128)
-  v128.const i32x4 0x00000000 0x00000000 0x00000000 0x00000000
-  local.get $0
-  i64x2.replace_lane 1
- )
- (func $simd/test_vars_i64x2_full (param $0 i64) (param $1 i64) (result v128)
-  local.get $0
-  i64x2.splat
-  local.get $1
-  i64x2.replace_lane 1
- )
- (func $simd/test_vars_f32x4_partial (param $0 f32) (param $1 f32) (param $2 f32) (result v128)
-  v128.const i32x4 0x00000000 0x00000000 0x00000000 0x00000000
-  local.get $0
-  f32x4.replace_lane 1
-  local.get $1
-  f32x4.replace_lane 2
-  local.get $2
-  f32x4.replace_lane 3
- )
- (func $simd/test_vars_f32x4_full (param $0 f32) (param $1 f32) (param $2 f32) (param $3 f32) (result v128)
-  local.get $0
-  f32x4.splat
-  local.get $1
-  f32x4.replace_lane 1
-  local.get $2
-  f32x4.replace_lane 2
-  local.get $3
-  f32x4.replace_lane 3
- )
- (func $simd/test_vars_f64x2_partial (param $0 f64) (result v128)
-  v128.const i32x4 0x00000000 0x00000000 0x00000000 0x00000000
-  local.get $0
-  f64x2.replace_lane 1
- )
- (func $simd/test_vars_f64x2_full (param $0 f64) (param $1 f64) (result v128)
-  local.get $0
-  f64x2.splat
-  local.get $1
-  f64x2.replace_lane 1
- )
- (func $~start
+ (func $simd/test_v128
   (local $0 i32)
   global.get $~lib/rt/tlsf/ROOT
   i32.eqz
@@ -1330,6 +1200,170 @@
   i32.const 4
   i32.add
   local.tee $0
+  i32.const 42
+  i32.store
+  local.get $0
+  v128.const i32x4 0x00000000 0x00000000 0x00000000 0x00000000
+  v128.load32_lane 0
+  v128.const i32x4 0x0000002a 0x00000000 0x00000000 0x00000000
+  i8x16.eq
+  i8x16.all_true
+  i32.eqz
+  if
+   i32.const 0
+   i32.const 1184
+   i32.const 210
+   i32.const 5
+   call $~lib/builtins/abort
+   unreachable
+  end
+  local.get $0
+  call $~lib/rt/tlsf/__free
+ )
+ (func $simd/test_vars_i8x16_partial (param $0 i32) (param $1 i32) (param $2 i32) (result v128)
+  v128.const i32x4 0x03000100 0x07000504 0x0b0a0908 0x000e0d0c
+  local.get $0
+  i8x16.replace_lane 2
+  local.get $1
+  i8x16.replace_lane 6
+  local.get $2
+  i8x16.replace_lane 15
+ )
+ (func $simd/test_vars_i8x16_full (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (param $5 i32) (param $6 i32) (param $7 i32) (param $8 i32) (param $9 i32) (param $10 i32) (param $11 i32) (param $12 i32) (param $13 i32) (param $14 i32) (param $15 i32) (result v128)
+  local.get $0
+  i8x16.splat
+  local.get $1
+  i8x16.replace_lane 1
+  local.get $2
+  i8x16.replace_lane 2
+  local.get $3
+  i8x16.replace_lane 3
+  local.get $4
+  i8x16.replace_lane 4
+  local.get $5
+  i8x16.replace_lane 5
+  local.get $6
+  i8x16.replace_lane 6
+  local.get $7
+  i8x16.replace_lane 7
+  local.get $8
+  i8x16.replace_lane 8
+  local.get $9
+  i8x16.replace_lane 9
+  local.get $10
+  i8x16.replace_lane 10
+  local.get $11
+  i8x16.replace_lane 11
+  local.get $12
+  i8x16.replace_lane 12
+  local.get $13
+  i8x16.replace_lane 13
+  local.get $14
+  i8x16.replace_lane 14
+  local.get $15
+  i8x16.replace_lane 15
+ )
+ (func $simd/test_vars_i16x8_partial (param $0 i32) (param $1 i32) (param $2 i32) (result v128)
+  v128.const i32x4 0x00010000 0x00030000 0x00050000 0x00000006
+  local.get $0
+  i16x8.replace_lane 2
+  local.get $1
+  i16x8.replace_lane 4
+  local.get $2
+  i16x8.replace_lane 7
+ )
+ (func $simd/test_vars_i16x8_full (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (param $4 i32) (param $5 i32) (param $6 i32) (param $7 i32) (result v128)
+  local.get $0
+  i16x8.splat
+  local.get $1
+  i16x8.replace_lane 1
+  local.get $2
+  i16x8.replace_lane 2
+  local.get $3
+  i16x8.replace_lane 3
+  local.get $4
+  i16x8.replace_lane 4
+  local.get $5
+  i16x8.replace_lane 5
+  local.get $6
+  i16x8.replace_lane 6
+  local.get $7
+  i16x8.replace_lane 7
+ )
+ (func $simd/test_vars_i32x4_partial (param $0 i32) (param $1 i32) (param $2 i32) (result v128)
+  v128.const i32x4 0x00000000 0x00000000 0x00000000 0x00000000
+  local.get $0
+  i32x4.replace_lane 1
+  local.get $1
+  i32x4.replace_lane 2
+  local.get $2
+  i32x4.replace_lane 3
+ )
+ (func $simd/test_vars_i32x4_full (param $0 i32) (param $1 i32) (param $2 i32) (param $3 i32) (result v128)
+  local.get $0
+  i32x4.splat
+  local.get $1
+  i32x4.replace_lane 1
+  local.get $2
+  i32x4.replace_lane 2
+  local.get $3
+  i32x4.replace_lane 3
+ )
+ (func $simd/test_vars_i64x2_partial (param $0 i64) (result v128)
+  v128.const i32x4 0x00000000 0x00000000 0x00000000 0x00000000
+  local.get $0
+  i64x2.replace_lane 1
+ )
+ (func $simd/test_vars_i64x2_full (param $0 i64) (param $1 i64) (result v128)
+  local.get $0
+  i64x2.splat
+  local.get $1
+  i64x2.replace_lane 1
+ )
+ (func $simd/test_vars_f32x4_partial (param $0 f32) (param $1 f32) (param $2 f32) (result v128)
+  v128.const i32x4 0x00000000 0x00000000 0x00000000 0x00000000
+  local.get $0
+  f32x4.replace_lane 1
+  local.get $1
+  f32x4.replace_lane 2
+  local.get $2
+  f32x4.replace_lane 3
+ )
+ (func $simd/test_vars_f32x4_full (param $0 f32) (param $1 f32) (param $2 f32) (param $3 f32) (result v128)
+  local.get $0
+  f32x4.splat
+  local.get $1
+  f32x4.replace_lane 1
+  local.get $2
+  f32x4.replace_lane 2
+  local.get $3
+  f32x4.replace_lane 3
+ )
+ (func $simd/test_vars_f64x2_partial (param $0 f64) (result v128)
+  v128.const i32x4 0x00000000 0x00000000 0x00000000 0x00000000
+  local.get $0
+  f64x2.replace_lane 1
+ )
+ (func $simd/test_vars_f64x2_full (param $0 f64) (param $1 f64) (result v128)
+  local.get $0
+  f64x2.splat
+  local.get $1
+  f64x2.replace_lane 1
+ )
+ (func $~start
+  (local $0 i32)
+  call $simd/test_v128
+  global.get $~lib/rt/tlsf/ROOT
+  i32.eqz
+  if
+   call $~lib/rt/tlsf/initialize
+  end
+  global.get $~lib/rt/tlsf/ROOT
+  i32.const 16
+  call $~lib/rt/tlsf/allocateBlock
+  i32.const 4
+  i32.add
+  local.tee $0
   i32.const 1
   i32.store8
   local.get $0
@@ -1362,7 +1396,7 @@
   if
    i32.const 0
    i32.const 1184
-   i32.const 392
+   i32.const 482
    i32.const 5
    call $~lib/builtins/abort
    unreachable
@@ -1376,7 +1410,7 @@
   if
    i32.const 0
    i32.const 1184
-   i32.const 397
+   i32.const 487
    i32.const 5
    call $~lib/builtins/abort
    unreachable
@@ -1414,7 +1448,7 @@
   if
    i32.const 0
    i32.const 1184
-   i32.const 523
+   i32.const 613
    i32.const 5
    call $~lib/builtins/abort
    unreachable
@@ -1428,7 +1462,7 @@
   if
    i32.const 0
    i32.const 1184
-   i32.const 528
+   i32.const 618
    i32.const 5
    call $~lib/builtins/abort
    unreachable
@@ -1460,7 +1494,7 @@
   if
    i32.const 0
    i32.const 1184
-   i32.const 582
+   i32.const 672
    i32.const 5
    call $~lib/builtins/abort
    unreachable
@@ -1474,7 +1508,7 @@
   if
    i32.const 0
    i32.const 1184
-   i32.const 587
+   i32.const 677
    i32.const 5
    call $~lib/builtins/abort
    unreachable

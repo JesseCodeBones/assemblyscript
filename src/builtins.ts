@@ -2814,6 +2814,7 @@ function builtin_atomic_cmpxchg(ctx: BuiltinContext): ExpressionRef {
 }
 builtins.set(BuiltinNames.atomic_cmpxchg, builtin_atomic_cmpxchg);
 
+/* c8 ignore start */
 // atomic.wait<T!>(ptr: usize, expected: T, timeout?: i64) -> i32
 function builtin_atomic_wait(ctx: BuiltinContext): ExpressionRef {
   var compiler = ctx.compiler;
@@ -2886,7 +2887,7 @@ function builtin_atomic_fence(ctx: BuiltinContext): ExpressionRef {
   return module.atomic_fence();
 }
 builtins.set(BuiltinNames.atomic_fence, builtin_atomic_fence);
-
+/* c8 ignore stop */
 // === Control flow ===========================================================================
 
 // select<T?>(ifTrue: T, ifFalse: T, condition: bool) -> T
@@ -4514,6 +4515,8 @@ function builtin_v128_load_lane(ctx: BuiltinContext): ExpressionRef {
 builtins.set(BuiltinNames.v128_load_lane, builtin_v128_load_lane);
 
 // v128.store_lane<TFrom!>(ptr: usize, vec: v128, idx: u8, immOffset?: usize, immAlign?: usize) -> v128
+/* c8 ignore start */
+//TODO: missing C-API in Binaryen (see also passes/pass.ts)
 function builtin_v128_store_lane(ctx: BuiltinContext): ExpressionRef {
   var compiler = ctx.compiler;
   var module = compiler.module;
@@ -4587,6 +4590,7 @@ function builtin_v128_store_lane(ctx: BuiltinContext): ExpressionRef {
   return module.unreachable();
 }
 builtins.set(BuiltinNames.v128_store_lane, builtin_v128_store_lane);
+/* c8 ignore stop */
 
 // v128.add<T!>(a: v128, b: v128) -> v128
 function builtin_v128_add(ctx: BuiltinContext): ExpressionRef {
@@ -7880,7 +7884,7 @@ function builtin_v128_load64_lane(ctx: BuiltinContext): ExpressionRef {
   return builtin_v128_load_lane(ctx);
 }
 builtins.set(BuiltinNames.v128_load64_lane, builtin_v128_load64_lane);
-
+/* c8 ignore start */
 // v128.store8_lane -> v128.store_lane<u8>
 function builtin_v128_store8_lane(ctx: BuiltinContext): ExpressionRef {
   checkTypeAbsent(ctx);
@@ -7926,6 +7930,7 @@ function builtin_v128_store(ctx: BuiltinContext): ExpressionRef {
   return builtin_store(ctx);
 }
 builtins.set(BuiltinNames.v128_store, builtin_v128_store);
+/* c8 ignore stop */
 
 // i8x16_splat -> v128.splat<i8>
 function builtin_i8x16_splat(ctx: BuiltinContext): ExpressionRef {
