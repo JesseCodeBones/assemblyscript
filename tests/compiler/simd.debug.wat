@@ -2706,22 +2706,14 @@
   i32.const 0
   i32.ne
   drop
-  v128.const i32x4 0x7f7f7f7f 0x7f7f7f7f 0x7f7f7f7f 0x7f7f7f7f
+  v128.const i32x4 0xffffffff 0xffffffff 0xffffffff 0xffffffff
   i8x16.abs
   v128.const i32x4 0x01010101 0x01010101 0x01010101 0x01010101
   i8x16.eq
   i8x16.all_true
   i32.const 0
   i32.ne
-  i32.eqz
-  if
-   i32.const 0
-   i32.const 160
-   i32.const 432
-   i32.const 3
-   call $~lib/builtins/abort
-   unreachable
-  end
+  drop
   v128.const i32x4 0x80808080 0x80808080 0x80808080 0x80808080
   i8x16.abs
   v128.const i32x4 0x80808080 0x80808080 0x80808080 0x80808080

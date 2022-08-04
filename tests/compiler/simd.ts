@@ -429,22 +429,22 @@ function test_i8x16(): void {
   }
   assert(i8x16.abs(i8x16(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)) == i8x16(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
   assert(i8x16.abs(i8x16(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1)) == i8x16(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
-  assert(i8x16.abs(i8x16(i8.MAX_VALUE,
-    i8.MAX_VALUE,
-    i8.MAX_VALUE,
-    i8.MAX_VALUE,
-    i8.MAX_VALUE,
-    i8.MAX_VALUE,
-    i8.MAX_VALUE,
-    i8.MAX_VALUE,
-    i8.MAX_VALUE,
-    i8.MAX_VALUE,
-    i8.MAX_VALUE,
-    i8.MAX_VALUE,
-    i8.MAX_VALUE,
-    i8.MAX_VALUE,
-    i8.MAX_VALUE,
-    i8.MAX_VALUE))
+  assert(i8x16.abs(i8x16(u8.MAX_VALUE,
+    u8.MAX_VALUE,
+    u8.MAX_VALUE,
+    u8.MAX_VALUE,
+    u8.MAX_VALUE,
+    u8.MAX_VALUE,
+    u8.MAX_VALUE,
+    u8.MAX_VALUE,
+    u8.MAX_VALUE,
+    u8.MAX_VALUE,
+    u8.MAX_VALUE,
+    u8.MAX_VALUE,
+    u8.MAX_VALUE,
+    u8.MAX_VALUE,
+    u8.MAX_VALUE,
+    u8.MAX_VALUE))
     == 
     i8x16(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
   );
