@@ -1081,7 +1081,7 @@
   local.get $0
   i32.xor
   drop
-  i32.const -42
+  i32.const 42
   drop
   i64.const 1
   i64.const 0
