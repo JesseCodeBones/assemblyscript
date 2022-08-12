@@ -65,3 +65,4 @@ class Ref {}
   assert(isArray(arr[0]));
   assert(!isNullable(arr));
 }
+

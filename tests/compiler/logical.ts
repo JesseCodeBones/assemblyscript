@@ -2,9 +2,14 @@
 0.0 && unreachable();
 1 || unreachable();
 1.0 || unreachable();
-
 1 && 2 || unreachable();
 1.0 && 2.0 || unreachable();
+{
+  let ptr = __alloc(32);
+  store<i32>(ptr, 1);
+  load<i32>(ptr) && 2 || unreachable();
+  __free(ptr);
+}
 
 var i: i32;
 

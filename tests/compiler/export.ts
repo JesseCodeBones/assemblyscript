@@ -27,6 +27,6 @@ export { c as renamed_c };
 export namespace ns {
   function one(): void {}
   export function two(): void {}
+  @inline export const d: i8 = 4; // inline export i8
 }
-
 export default ns;

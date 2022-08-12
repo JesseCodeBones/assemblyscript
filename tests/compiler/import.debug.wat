@@ -61,6 +61,10 @@
   drop
   call $export/ns.two
   call $export/ns.two
+  global.get $export/a
+  i32.const 4
+  call $export/add
+  drop
   call $export-default/theDefault
  )
  (func $~start

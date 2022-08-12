@@ -1,5 +1,9 @@
 // hint: asc tests/compiler/simd --enable simd
-
+{
+  //test static array literal
+  let arr = [i32x4(1, 2, 3, 4)];
+  assert(v128.extract_lane<i32>(arr[0], 0) == 1);
+}
 function test_v128(): void {
   // check trueish
   // @ts-ignore
@@ -220,17 +224,11 @@ function test_v128(): void {
   }
   {
     let v: v128 = v128.ceil<f32>(f32x4(1.1, -0.25, 70.01, 4.0));
-    assert(v128.extract_lane<f32>(v, 0) == 2.0);
-    assert(v128.extract_lane<f32>(v, 1) == 0.0);
-    assert(v128.extract_lane<f32>(v, 2) == 71.0);
-    assert(v128.extract_lane<f32>(v, 3) == 4.0);
+    assert(v == f32x4(2, -0.0, 71, 4));
   }
   {
     let v: v128 =v128.floor<f32>(f32x4(1.1, -0.25, 70.01, 4.0))
-    assert(v128.extract_lane<f32>(v, 0) == 1.0);
-    assert(v128.extract_lane<f32>(v, 1) == -1);
-    assert(v128.extract_lane<f32>(v, 2) == 70.0);
-    assert(v128.extract_lane<f32>(v, 3) == 4.0);
+    assert(v == f32x4(1, -1, 70, 4));
   }
   {
     assert(
@@ -990,17 +988,11 @@ function test_f32x4(): void {
   );
   {
     let v: v128 = f32x4.ceil(f32x4(1.1, -0.25, 70.01, 4.0));
-    assert(v128.extract_lane<f32>(v, 0) == 2.0);
-    assert(v128.extract_lane<f32>(v, 1) == 0.0);
-    assert(v128.extract_lane<f32>(v, 2) == 71.0);
-    assert(v128.extract_lane<f32>(v, 3) == 4.0);
+    assert(v == f32x4(2, -0.0, 71, 4));
   }
   {
     let v: v128 =f32x4.floor(f32x4(1.1, -0.25, 70.01, 4.0))
-    assert(v128.extract_lane<f32>(v, 0) == 1.0);
-    assert(v128.extract_lane<f32>(v, 1) == -1);
-    assert(v128.extract_lane<f32>(v, 2) == 70.0);
-    assert(v128.extract_lane<f32>(v, 3) == 4.0);
+    assert(v == f32x4(1, -1, 70, 4));
   }
   assert(
     f32x4.trunc(f32x4(1.1, 2.5, 3.9, 4.0))

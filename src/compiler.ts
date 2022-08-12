@@ -921,57 +921,7 @@ export class Compiler extends DiagnosticEmitter {
     );
   }
 
-  // === Elements =================================================================================
-
-  /** Compiles any element. */
-  compileElement(element: Element, compileMembers: bool = true): void {
-    switch (element.kind) {
-      case ElementKind.GLOBAL: {
-        this.compileGlobal(<Global>element);
-        break;
-      }
-      case ElementKind.ENUM: {
-        this.compileEnum(<Enum>element);
-        break;
-      }
-      case ElementKind.FUNCTION_PROTOTYPE: {
-        if (!element.is(CommonFlags.GENERIC)) {
-          let functionInstance = this.resolver.resolveFunction(<FunctionPrototype>element, null);
-          if (functionInstance) this.compileFunction(functionInstance);
-        }
-        break;
-      }
-      case ElementKind.CLASS_PROTOTYPE: {
-        if (!element.is(CommonFlags.GENERIC)) {
-          let classInstance = this.resolver.resolveClass(<ClassPrototype>element, null);
-          if (classInstance) this.compileClass(classInstance);
-        }
-        break;
-      }
-      case ElementKind.PROPERTY_PROTOTYPE: {
-        let propertyInstance = this.resolver.resolveProperty(<PropertyPrototype>element);
-        if (propertyInstance) this.compileProperty(propertyInstance);
-        break;
-      }
-      case ElementKind.INTERFACE_PROTOTYPE:
-      case ElementKind.NAMESPACE:
-      case ElementKind.TYPEDEFINITION:
-      case ElementKind.ENUMVALUE:
-      case ElementKind.INDEXSIGNATURE: break;
-      default: assert(false);
-    }
-    if (compileMembers) {
-      let members = element.members;
-      if (members) {
-        // TODO: for (let element of members.values()) {
-        for (let _values = Map_values(members), i = 0, k = _values.length; i < k; ++i) {
-          let element = unchecked(_values[i]);
-          this.compileElement(element);
-        }
-      }
-    }
-  }
-
+  
   // files
 
   /** Compiles the file matching the specified path. */
@@ -1629,88 +1579,7 @@ export class Compiler extends DiagnosticEmitter {
 
     return true;
   }
-
-  // === Classes ==================================================================================
-
-  /** Compiles a priorly resolved class. */
-  compileClass(instance: Class): bool {
-    if (instance.is(CommonFlags.COMPILED)) return true;
-    instance.set(CommonFlags.COMPILED);
-    var prototype = instance.prototype;
-    var staticMembers = (<ClassPrototype>prototype).members;
-    if (staticMembers) {
-      // TODO: for (let element of staticMembers.values()) {
-      for (let _values = Map_values(staticMembers), i = 0, k = _values.length; i < k; ++i) {
-        let element = unchecked(_values[i]);
-        switch (element.kind) {
-          case ElementKind.GLOBAL: {
-            this.compileGlobal(<Global>element);
-            break;
-          }
-          case ElementKind.FUNCTION_PROTOTYPE: {
-            if (element.is(CommonFlags.GENERIC)) break;
-            let functionInstance = this.resolver.resolveFunction(<FunctionPrototype>element, null);
-            if (!functionInstance) break;
-            element = functionInstance;
-            // fall-through
-          }
-          case ElementKind.FUNCTION: {
-            this.compileFunction(<Function>element);
-            break;
-          }
-          case ElementKind.PROPERTY_PROTOTYPE: {
-            let propertyInstance = this.resolver.resolveProperty(<PropertyPrototype>element);
-            if (!propertyInstance) break;
-            element = propertyInstance;
-            // fall-through
-          }
-          case ElementKind.PROPERTY: {
-            this.compileProperty(<Property>element);
-            break;
-          }
-        }
-      }
-    }
-    this.ensureConstructor(instance, instance.identifierNode);
-    this.checkFieldInitialization(instance);
-
-    var instanceMembers = instance.members;
-    if (instanceMembers) {
-      // TODO: for (let element of instanceMembers.values()) {
-      for (let _values = Map_values(instanceMembers), i = 0, k = _values.length; i < k; ++i) {
-        let element = unchecked(_values[i]);
-        switch (element.kind) {
-          case ElementKind.FUNCTION_PROTOTYPE: {
-            if (element.is(CommonFlags.GENERIC)) break;
-            let functionInstance = this.resolver.resolveFunction(<FunctionPrototype>element, null);
-            if (!functionInstance) break;
-            element = functionInstance;
-            // fall-through
-          }
-          case ElementKind.FUNCTION: {
-            this.compileFunction(<Function>element);
-            break;
-          }
-          case ElementKind.FIELD: {
-            this.compileField(<Field>element);
-            break;
-          }
-          case ElementKind.PROPERTY_PROTOTYPE: {
-            let propertyInstance = this.resolver.resolveProperty(<PropertyPrototype>element);
-            if (!propertyInstance) break;
-            element = propertyInstance;
-            // fall-through
-          }
-          case ElementKind.PROPERTY: {
-            this.compileProperty(<Property>element);
-            break;
-          }
-        }
-      }
-    }
-    return true;
-  }
-
+/* c8 ignore start */
   /** Compiles an instance field to a getter and a setter. */
   compileField(instance: Field): bool {
     this.compileFieldGetter(instance);
@@ -1740,7 +1609,7 @@ export class Compiler extends DiagnosticEmitter {
     }
     return true;
   }
-
+/* c8 ignore stop */
   /** Compiles the setter of the specified instance field. */
   compileFieldSetter(instance: Field): bool {
     if (instance.setterRef) return true;
@@ -1780,41 +1649,6 @@ export class Compiler extends DiagnosticEmitter {
       if (typeNode) this.checkTypeSupported(instance.type, typeNode);
     }
     return true;
-  }
-
-  /** Compiles a property to a getter and potentially a setter. */
-  compileProperty(instance: Property): bool {
-    this.compilePropertyGetter(instance);
-    this.compilePropertySetter(instance);
-    return instance.is(CommonFlags.COMPILED);
-  }
-
-  /* Compiles the getter of the specified property. */
-  compilePropertyGetter(instance: Property): bool {
-    var getterInstance = instance.getterInstance;
-    if (getterInstance) {
-      let ret = this.compileFunction(getterInstance);
-      let setterInstance = instance.setterInstance;
-      if (getterInstance.is(CommonFlags.COMPILED) && (!setterInstance || setterInstance.is(CommonFlags.COMPILED))) {
-        instance.set(CommonFlags.COMPILED);
-      }
-      return ret;
-    }
-    return false;
-  }
-
-  /** Compiles the setter of the specified property. */
-  compilePropertySetter(instance: Property): bool {
-    var setterInstance = instance.setterInstance;
-    if (setterInstance) {
-      let ret = this.compileFunction(setterInstance);
-      let getterInstance = instance.getterInstance;
-      if (getterInstance && getterInstance.is(CommonFlags.COMPILED) && setterInstance.is(CommonFlags.COMPILED)) {
-        instance.set(CommonFlags.COMPILED);
-      }
-      return ret;
-    }
-    return false;
   }
 
   // === Memory ===================================================================================
@@ -8061,7 +7895,7 @@ export class Compiler extends DiagnosticEmitter {
   ): ExpressionRef {
     return this.ensureStaticString(expression.value);
   }
-
+  /* c8 ignore start */
   private compileTemplateLiteral(
     expression: TemplateLiteralExpression,
     constraints: Constraints
@@ -8182,7 +8016,7 @@ export class Compiler extends DiagnosticEmitter {
       ], expression);
       return module.flatten(stmts, stringType.toRef());
     }
-
+    
     // Try to find out whether the template function takes a full-blown TemplateStringsArray or if
     // it is sufficient to compile to a normal array. While technically incorrect, this allows us
     // to avoid generating unnecessary static data that is not explicitly signaled to be used.
@@ -8263,6 +8097,7 @@ export class Compiler extends DiagnosticEmitter {
     );
     return this.compileCallExpressionLike(tag, null, args, expression.range, stringType);
   }
+  /* c8 ignore stop */
 
   private compileArrayLiteral(
     expression: ArrayLiteralExpression,

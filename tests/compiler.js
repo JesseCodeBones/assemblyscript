@@ -564,24 +564,24 @@ if (args.parallel && coreCount > 2) {
   let failedTests = new Map();
   let skippedTests = new Map();
 
-  for (const test of getTests()) {
-    const { code, message } = await runTest(test);
-    switch (code) {
-      case SUCCESS: break;
-      case FAILURE: failedTests.set(test, message); break;
-      case SKIPPED: skippedTests.set(test, message); break;
-      default: new Error(`invalid code: ${code}`);
-    }
-  }
-
-  // let test = "simd";
-  // const { code, message } = await runTest(test);
-  // switch (code) {
-  //   case SUCCESS: break;
-  //   case FAILURE: failedTests.set(test, message); break;
-  //   case SKIPPED: skippedTests.set(test, message); break;
-  //   default: new Error(`invalid code: ${code}`);
+  // for (const test of getTests()) {
+  //   const { code, message } = await runTest(test);
+  //   switch (code) {
+  //     case SUCCESS: break;
+  //     case FAILURE: failedTests.set(test, message); break;
+  //     case SKIPPED: skippedTests.set(test, message); break;
+  //     default: new Error(`invalid code: ${code}`);
+  //   }
   // }
+
+  let test = "std/math";
+  const { code, message } = await runTest(test);
+  switch (code) {
+    case SUCCESS: break;
+    case FAILURE: failedTests.set(test, message); break;
+    case SKIPPED: skippedTests.set(test, message); break;
+    default: new Error(`invalid code: ${code}`);
+  }
 
 
   evaluateResult(failedTests, skippedTests);

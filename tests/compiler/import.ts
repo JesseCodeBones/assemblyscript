@@ -23,7 +23,7 @@ other.ns.two();
 import theDefault from "./export";
 
 theDefault.two();
-
+add(a, theDefault.d);
 import theOtherDefault from "./export-default";
 
 theOtherDefault();
