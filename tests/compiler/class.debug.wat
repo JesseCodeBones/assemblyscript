@@ -2159,6 +2159,10 @@
   local.get $0
   i32.load
  )
+ (func $class/A#get:two (param $0 i32) (result i32)
+  local.get $0
+  i32.load offset=4
+ )
  (func $class/A.set:one (param $0 i32)
   local.get $0
   global.set $class/A._one
@@ -2468,13 +2472,13 @@
   (local $0 i32)
   (local $1 i32)
   global.get $~lib/memory/__stack_pointer
-  i32.const 4
+  i32.const 8
   i32.sub
   global.set $~lib/memory/__stack_pointer
   call $~stack_check
   global.get $~lib/memory/__stack_pointer
-  i32.const 0
-  i32.store
+  i64.const 0
+  i64.store
   i32.const 4
   i32.const 4
   i32.eq
@@ -2524,11 +2528,29 @@
     br $while-continue|0
    end
   end
+  loop $while-continue|1
+   global.get $~lib/memory/__stack_pointer
+   global.get $class/a
+   local.tee $0
+   i32.store
+   local.get $0
+   global.get $class/zero
+   call $class/A#set:two
+   local.get $0
+   call $class/A#get:two
+   local.set $0
+   local.get $0
+   if
+    i32.const 1
+    global.set $class/zero
+    br $while-continue|1
+   end
+  end
   global.get $class/a
   local.set $1
   global.get $~lib/memory/__stack_pointer
   local.get $1
-  i32.store
+  i32.store offset=4
   local.get $1
   call $class/A#get:three
   i32.const 0
@@ -2537,7 +2559,7 @@
   if
    i32.const 0
    i32.const 432
-   i32.const 66
+   i32.const 69
    i32.const 1
    call $~lib/builtins/abort
    unreachable
@@ -2549,7 +2571,7 @@
   if
    i32.const 0
    i32.const 432
-   i32.const 67
+   i32.const 70
    i32.const 1
    call $~lib/builtins/abort
    unreachable
@@ -2558,7 +2580,7 @@
   local.set $1
   global.get $~lib/memory/__stack_pointer
   local.get $1
-  i32.store
+  i32.store offset=4
   local.get $1
   call $class/A#changeOne
   call $class/A.get:one
@@ -2568,13 +2590,13 @@
   if
    i32.const 0
    i32.const 432
-   i32.const 69
+   i32.const 72
    i32.const 1
    call $~lib/builtins/abort
    unreachable
   end
   global.get $~lib/memory/__stack_pointer
-  i32.const 4
+  i32.const 8
   i32.add
   global.set $~lib/memory/__stack_pointer
  )

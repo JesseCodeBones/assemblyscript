@@ -6246,6 +6246,7 @@ export class Compiler extends DiagnosticEmitter {
     );
   }
 
+  /* c8 ignore start */
   /** Compiles the given arguments like a call expression according to the specified context. */
   private compileCallExpressionLike(
     /** Called expression. */
@@ -6273,6 +6274,8 @@ export class Compiler extends DiagnosticEmitter {
     }
     return this.compileCallExpression(call, contextualType, constraints);
   }
+  /* c8 ignore stop */
+
   private _reusableCallExpression: CallExpression | null = null;
 
   private compileCallExpressionBuiltin(

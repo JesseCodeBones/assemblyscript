@@ -63,6 +63,9 @@ let zero = i32(0);
 while(a.three = zero) {
   zero = 1;
 }
+while(a.two = zero) {
+  zero = 1;
+}
 assert(a.three == 0);
 assert(zero == 0);
 a.changeOne();
