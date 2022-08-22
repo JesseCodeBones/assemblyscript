@@ -13,7 +13,7 @@ class Animal<T> {
 assert(sizeof<Animal<f64>>() == sizeof<usize>());
 
 Animal.ONE;
-Animal.add(1, 2);
+Animal.add(1,2);
 Animal.sub<f32>(1, 2);
 
 export function test(animal: Animal<f64>): Animal<f64> {
@@ -41,24 +41,22 @@ export function testGenericInitializer(): void {
   new GenericInitializer<i32>();
 }
 
-class A {
+class PropertyPrototypeClass {
   private static _one: i32 = 10;
+  two:i32 = 2;
   private _three: i32 = 11;
-  static get one(): i32 { return A._one; }
+  static get one(): i32 { return PropertyPrototypeClass._one; }
   static set one(a: i32) {
-    A._one = a;
+    PropertyPrototypeClass._one = a;
   }
   get three():i32 {return this._three;}
   set three(a:i32){this._three = a;}
   changeOne():void{
-    A.one = 11;
+    PropertyPrototypeClass.one = 11;
   }
-  two:i32 = 2;
 }
 
-class B extends A{}
-
-let a = new B();
+let a = new PropertyPrototypeClass();
 let zero = i32(0);
 while(a.three = zero) {
   zero = 1;
@@ -69,4 +67,4 @@ while(a.two = zero) {
 assert(a.three == 0);
 assert(zero == 0);
 a.changeOne();
-assert(A.one == 11);
+assert(PropertyPrototypeClass.one == 11);

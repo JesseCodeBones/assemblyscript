@@ -5624,6 +5624,7 @@ export class Compiler extends DiagnosticEmitter {
         if (target.hasDecorator(DecoratorFlags.UNSAFE)) this.checkUnsafe(expression);
         break;
       }
+      /* c8 ignore start */
       case ElementKind.PROPERTY_PROTOTYPE: {
         let propertyPrototype = <PropertyPrototype>target;
         let propertyInstance = resolver.resolveProperty(propertyPrototype);
@@ -5631,6 +5632,7 @@ export class Compiler extends DiagnosticEmitter {
         target = propertyInstance;
         // fall-through
       }
+      /* c8 ignore stop */
       case ElementKind.PROPERTY: {
         let propertyInstance = <Property>target;
         let setterInstance = propertyInstance.setterInstance;
@@ -6168,13 +6170,14 @@ export class Compiler extends DiagnosticEmitter {
         );
         return module.unreachable();
       }
-
+      /* c8 ignore start */
       case ElementKind.PROPERTY_PROTOTYPE: {
         let propertyInstance = this.resolver.resolveProperty(<PropertyPrototype>target);
         if (!propertyInstance) return module.unreachable();
         target = propertyInstance;
         // fall-through
       }
+      /* c8 ignore stop */
       case ElementKind.PROPERTY: {
         let propertyInstance = <Property>target;
         let getterInstance = propertyInstance.getterInstance;
@@ -8951,6 +8954,7 @@ export class Compiler extends DiagnosticEmitter {
         }
         return ret;
       }
+      /* c8 ignore start */
       case ElementKind.PROPERTY_PROTOTYPE: {
         let propertyPrototype = <PropertyPrototype>target;
         let propertyInstance = this.resolver.resolveProperty(propertyPrototype);
@@ -8958,6 +8962,7 @@ export class Compiler extends DiagnosticEmitter {
         target = propertyInstance;
         // fall-through
       }
+      /* c8 ignore stop */
       case ElementKind.PROPERTY: {
         let propertyInstance = <Property>target;
         let getterInstance = propertyInstance.getterInstance;
@@ -9779,6 +9784,7 @@ export class Compiler extends DiagnosticEmitter {
         if (flow.canOverflow(expr, type)) {
           expr = this.options.hasFeature(Feature.SIGN_EXTENSION)
             ? module.unary(UnaryOp.Extend8I32, expr)
+            /* c8 ignore start */
             : module.binary(BinaryOp.ShrI32,
                 module.binary(BinaryOp.ShlI32,
                   expr,
@@ -9786,6 +9792,7 @@ export class Compiler extends DiagnosticEmitter {
                 ),
                 module.i32(24)
               );
+            /* c8 ignore stop */
         }
         break;
       }
@@ -9793,6 +9800,7 @@ export class Compiler extends DiagnosticEmitter {
         if (flow.canOverflow(expr, type)) {
           expr = this.options.hasFeature(Feature.SIGN_EXTENSION)
             ? module.unary(UnaryOp.Extend16I32, expr)
+            /* c8 ignore start */
             : module.binary(BinaryOp.ShrI32,
                 module.binary(BinaryOp.ShlI32,
                   expr,
@@ -9800,6 +9808,7 @@ export class Compiler extends DiagnosticEmitter {
                 ),
                 module.i32(16)
               );
+            /* c8 ignore stop */
         }
         break;
       }
@@ -9834,7 +9843,7 @@ export class Compiler extends DiagnosticEmitter {
     }
     return expr;
   }
-
+/* c8 ignore start */
   /** Adds the debug location of the specified expression at the specified range to the source map. */
   addDebugLocation(expr: ExpressionRef, range: Range): void {
     var parentFunction = this.currentFlow.parentFunction;
@@ -9843,6 +9852,7 @@ export class Compiler extends DiagnosticEmitter {
     range.debugInfoRef = expr;
     parentFunction.debugLocations.push(range);
   }
+  /* c8 ignore stop */
 
   /** Checks whether a particular feature is enabled. */
   checkFeatureEnabled(feature: Feature, reportNode: Node): bool {
@@ -9985,6 +9995,7 @@ export class Compiler extends DiagnosticEmitter {
     var module = this.module;
     switch (type.kind) {
       default: assert(false);
+      /* c8 ignore start */
       case TypeKind.I8:
       case TypeKind.I16:
       case TypeKind.I32:
@@ -9992,13 +10003,16 @@ export class Compiler extends DiagnosticEmitter {
       case TypeKind.U16:
       case TypeKind.U32:
       case TypeKind.BOOL: return module.i32(1);
+      /* c8 ignore stop */
       case TypeKind.ISIZE:
       case TypeKind.USIZE: if (type.size != 64) return module.i32(1);
+      /* c8 ignore start */
       case TypeKind.I64:
       case TypeKind.U64: return module.i64(1);
       case TypeKind.F32: return module.f32(1);
       case TypeKind.F64: return module.f64(1);
       case TypeKind.I31REF: return module.i31_new(module.i32(1));
+      /* c8 ignore stop */
     }
   }
 
@@ -10007,18 +10021,22 @@ export class Compiler extends DiagnosticEmitter {
     var module = this.module;
     switch (type.kind) {
       default: assert(false);
+      /* c8 ignore start */
       case TypeKind.I8:
       case TypeKind.I16:
       case TypeKind.I32:
       case TypeKind.U8:
       case TypeKind.U16:
       case TypeKind.U32: return module.i32(-1);
+      /* c8 ignore stop */
       case TypeKind.ISIZE:
       case TypeKind.USIZE: if (type.size != 64) return module.i32(-1);
+      /* c8 ignore start */
       case TypeKind.I64:
       case TypeKind.U64: return module.i64(-1, -1);
       case TypeKind.F32: return module.f32(-1);
       case TypeKind.F64: return module.f64(-1);
+      /* c8 ignore stop */
     }
   }
 

@@ -12,7 +12,7 @@
  (type $i32_f32_f32_=>_f32 (func (param i32 f32 f32) (result f32)))
  (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
  (global $class/Animal.ONE (mut i32) (i32.const 1))
- (global $class/A._one (mut i32) (i32.const 10))
+ (global $class/PropertyPrototypeClass._one (mut i32) (i32.const 10))
  (global $~lib/rt/itcms/total (mut i32) (i32.const 0))
  (global $~lib/rt/itcms/threshold (mut i32) (i32.const 0))
  (global $~lib/rt/itcms/state (mut i32) (i32.const 0))
@@ -31,9 +31,9 @@
  (global $class/zero (mut i32) (i32.const 0))
  (global $~lib/native/ASC_RUNTIME i32 (i32.const 2))
  (global $~lib/rt/__rtti_base i32 (i32.const 560))
- (global $~lib/memory/__data_end i32 (i32.const 628))
- (global $~lib/memory/__stack_pointer (mut i32) (i32.const 17012))
- (global $~lib/memory/__heap_base i32 (i32.const 17012))
+ (global $~lib/memory/__data_end i32 (i32.const 620))
+ (global $~lib/memory/__stack_pointer (mut i32) (i32.const 17004))
+ (global $~lib/memory/__heap_base i32 (i32.const 17004))
  (memory $0 1)
  (data (i32.const 12) "<\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00(\00\00\00A\00l\00l\00o\00c\00a\00t\00i\00o\00n\00 \00t\00o\00o\00 \00l\00a\00r\00g\00e\00\00\00\00\00")
  (data (i32.const 76) "<\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00 \00\00\00~\00l\00i\00b\00/\00r\00t\00/\00i\00t\00c\00m\00s\00.\00t\00s\00\00\00\00\00\00\00\00\00\00\00\00\00")
@@ -46,7 +46,7 @@
  (data (i32.const 412) ",\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00\10\00\00\00c\00l\00a\00s\00s\00.\00t\00s\00\00\00\00\00\00\00\00\00\00\00\00\00")
  (data (i32.const 460) ",\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00\1c\00\00\00I\00n\00v\00a\00l\00i\00d\00 \00l\00e\00n\00g\00t\00h\00")
  (data (i32.const 508) ",\00\00\00\00\00\00\00\00\00\00\00\01\00\00\00\1a\00\00\00~\00l\00i\00b\00/\00a\00r\00r\00a\00y\00.\00t\00s\00\00\00")
- (data (i32.const 560) "\08\00\00\00 \00\00\00\00\00\00\00 \00\00\00\00\00\00\00\00\00\00\00\00\00\00\00 \00\00\00\00\00\00\00 \00\00\00\05\00\00\00 \00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\02\t\00\00\00\00\00\00")
+ (data (i32.const 560) "\07\00\00\00 \00\00\00\00\00\00\00 \00\00\00\00\00\00\00\00\00\00\00\00\00\00\00 \00\00\00\00\00\00\00 \00\00\00\00\00\00\00\00\00\00\00\00\00\00\00\02\t\00\00\00\00\00\00")
  (table $0 1 1 funcref)
  (elem $0 (i32.const 1))
  (export "testGenericInitializer" (func $class/testGenericInitializer))
@@ -2140,39 +2140,39 @@
   memory.fill
   local.get $3
  )
- (func $class/A#set:_three (param $0 i32) (param $1 i32)
+ (func $class/PropertyPrototypeClass#set:two (param $0 i32) (param $1 i32)
   local.get $0
   local.get $1
   i32.store
  )
- (func $class/A#set:two (param $0 i32) (param $1 i32)
+ (func $class/PropertyPrototypeClass#set:_three (param $0 i32) (param $1 i32)
   local.get $0
   local.get $1
   i32.store offset=4
  )
- (func $class/A#set:three (param $0 i32) (param $1 i32)
+ (func $class/PropertyPrototypeClass#set:three (param $0 i32) (param $1 i32)
   local.get $0
   local.get $1
-  call $class/A#set:_three
+  call $class/PropertyPrototypeClass#set:_three
  )
- (func $class/A#get:three (param $0 i32) (result i32)
-  local.get $0
-  i32.load
- )
- (func $class/A#get:two (param $0 i32) (result i32)
+ (func $class/PropertyPrototypeClass#get:three (param $0 i32) (result i32)
   local.get $0
   i32.load offset=4
  )
- (func $class/A.set:one (param $0 i32)
+ (func $class/PropertyPrototypeClass#get:two (param $0 i32) (result i32)
   local.get $0
-  global.set $class/A._one
+  i32.load
  )
- (func $class/A#changeOne (param $0 i32)
+ (func $class/PropertyPrototypeClass.set:one (param $0 i32)
+  local.get $0
+  global.set $class/PropertyPrototypeClass._one
+ )
+ (func $class/PropertyPrototypeClass#changeOne (param $0 i32)
   i32.const 11
-  call $class/A.set:one
+  call $class/PropertyPrototypeClass.set:one
  )
- (func $class/A.get:one (result i32)
-  global.get $class/A._one
+ (func $class/PropertyPrototypeClass.get:one (result i32)
+  global.get $class/PropertyPrototypeClass._one
  )
  (func $class/Animal<f64>#instanceAdd (param $0 i32) (param $1 i32) (param $2 i32) (result i32)
   local.get $1
@@ -2413,27 +2413,24 @@
   block $invalid
    block $~lib/array/Array<i32>
     block $class/GenericInitializer<i32>
-     block $class/A
-      block $class/B
-       block $class/Animal<f64>
-        block $~lib/arraybuffer/ArrayBufferView
-         block $~lib/string/String
-          block $~lib/arraybuffer/ArrayBuffer
-           local.get $0
-           i32.const 8
-           i32.sub
-           i32.load
-           br_table $~lib/arraybuffer/ArrayBuffer $~lib/string/String $~lib/arraybuffer/ArrayBufferView $class/Animal<f64> $class/B $class/A $class/GenericInitializer<i32> $~lib/array/Array<i32> $invalid
-          end
-          return
+     block $class/PropertyPrototypeClass
+      block $class/Animal<f64>
+       block $~lib/arraybuffer/ArrayBufferView
+        block $~lib/string/String
+         block $~lib/arraybuffer/ArrayBuffer
+          local.get $0
+          i32.const 8
+          i32.sub
+          i32.load
+          br_table $~lib/arraybuffer/ArrayBuffer $~lib/string/String $~lib/arraybuffer/ArrayBufferView $class/Animal<f64> $class/PropertyPrototypeClass $class/GenericInitializer<i32> $~lib/array/Array<i32> $invalid
          end
          return
         end
-        local.get $0
-        local.get $1
-        call $~lib/arraybuffer/ArrayBufferView~visit
         return
        end
+       local.get $0
+       local.get $1
+       call $~lib/arraybuffer/ArrayBufferView~visit
        return
       end
       return
@@ -2460,8 +2457,8 @@
   global.get $~lib/memory/__data_end
   i32.lt_s
   if
-   i32.const 17040
-   i32.const 17088
+   i32.const 17024
+   i32.const 17072
    i32.const 1
    i32.const 1
    call $~lib/builtins/abort
@@ -2511,15 +2508,15 @@
   call $~lib/rt/itcms/initLazy
   global.set $~lib/rt/itcms/fromSpace
   i32.const 0
-  call $class/B#constructor
+  call $class/PropertyPrototypeClass#constructor
   global.set $class/a
   loop $while-continue|0
    global.get $class/a
    local.tee $0
    global.get $class/zero
-   call $class/A#set:three
+   call $class/PropertyPrototypeClass#set:three
    local.get $0
-   call $class/A#get:three
+   call $class/PropertyPrototypeClass#get:three
    local.set $0
    local.get $0
    if
@@ -2535,9 +2532,9 @@
    i32.store
    local.get $0
    global.get $class/zero
-   call $class/A#set:two
+   call $class/PropertyPrototypeClass#set:two
    local.get $0
-   call $class/A#get:two
+   call $class/PropertyPrototypeClass#get:two
    local.set $0
    local.get $0
    if
@@ -2552,14 +2549,14 @@
   local.get $1
   i32.store offset=4
   local.get $1
-  call $class/A#get:three
+  call $class/PropertyPrototypeClass#get:three
   i32.const 0
   i32.eq
   i32.eqz
   if
    i32.const 0
    i32.const 432
-   i32.const 69
+   i32.const 67
    i32.const 1
    call $~lib/builtins/abort
    unreachable
@@ -2571,7 +2568,7 @@
   if
    i32.const 0
    i32.const 432
-   i32.const 70
+   i32.const 68
    i32.const 1
    call $~lib/builtins/abort
    unreachable
@@ -2582,15 +2579,15 @@
   local.get $1
   i32.store offset=4
   local.get $1
-  call $class/A#changeOne
-  call $class/A.get:one
+  call $class/PropertyPrototypeClass#changeOne
+  call $class/PropertyPrototypeClass.get:one
   i32.const 11
   i32.eq
   i32.eqz
   if
    i32.const 0
    i32.const 432
-   i32.const 72
+   i32.const 70
    i32.const 1
    call $~lib/builtins/abort
    unreachable
@@ -2600,41 +2597,7 @@
   i32.add
   global.set $~lib/memory/__stack_pointer
  )
- (func $class/A#constructor (param $0 i32) (result i32)
-  (local $1 i32)
-  global.get $~lib/memory/__stack_pointer
-  i32.const 4
-  i32.sub
-  global.set $~lib/memory/__stack_pointer
-  call $~stack_check
-  global.get $~lib/memory/__stack_pointer
-  i32.const 0
-  i32.store
-  local.get $0
-  i32.eqz
-  if
-   global.get $~lib/memory/__stack_pointer
-   i32.const 8
-   i32.const 5
-   call $~lib/rt/itcms/__new
-   local.tee $0
-   i32.store
-  end
-  local.get $0
-  i32.const 11
-  call $class/A#set:_three
-  local.get $0
-  i32.const 2
-  call $class/A#set:two
-  local.get $0
-  local.set $1
-  global.get $~lib/memory/__stack_pointer
-  i32.const 4
-  i32.add
-  global.set $~lib/memory/__stack_pointer
-  local.get $1
- )
- (func $class/B#constructor (param $0 i32) (result i32)
+ (func $class/PropertyPrototypeClass#constructor (param $0 i32) (result i32)
   (local $1 i32)
   global.get $~lib/memory/__stack_pointer
   i32.const 4
@@ -2654,11 +2617,12 @@
    local.tee $0
    i32.store
   end
-  global.get $~lib/memory/__stack_pointer
   local.get $0
-  call $class/A#constructor
-  local.tee $0
-  i32.store
+  i32.const 2
+  call $class/PropertyPrototypeClass#set:two
+  local.get $0
+  i32.const 11
+  call $class/PropertyPrototypeClass#set:_three
   local.get $0
   local.set $1
   global.get $~lib/memory/__stack_pointer
@@ -2686,7 +2650,7 @@
   if
    global.get $~lib/memory/__stack_pointer
    i32.const 16
-   i32.const 7
+   i32.const 6
    call $~lib/rt/itcms/__new
    local.tee $0
    i32.store
@@ -2772,7 +2736,7 @@
   if
    global.get $~lib/memory/__stack_pointer
    i32.const 4
-   i32.const 6
+   i32.const 5
    call $~lib/rt/itcms/__new
    local.tee $0
    i32.store
