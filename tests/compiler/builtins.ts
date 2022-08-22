@@ -1,5 +1,6 @@
 var b: bool;
 class C {}
+var i: i32;
 
 // type checks
 
@@ -61,9 +62,112 @@ var v: u8;
 v = rotl<u8>(<u8>0b10001111, 3); assert(v == 0b01111100);
 v = rotr<u8>(<u8>0b10101010, 1); assert(v == 0b01010101);
 
-// integers
+popcnt<i8>(1);
+popcnt<u8>(1);
+abs<i8>(-1);
+abs<u8>(1);
+max<i8>(1, 2);
+max<u8>(1, 2);
+min<i8>(1, 2);
+min<u8>(1, 2);
+ceil<i8>(1);
+ceil<u8>(1);
+floor<i8>(1);
+floor<u8>(1);
+nearest<i8>(1);
+nearest<u8>(1);
+trunc<i8>(1);
+trunc<u8>(1);
+isNaN<i8>(1);
+isNaN<u8>(1);
+isFinite<i8>(1);
+isFinite<u8>(1);
+let ai8:i8 = 1;
+while(assert<i8>(ai8)) {
+  ai8++;
+  if(ai8>2) {
+    break;
+  }
+}
+let au8:u8 = 1;
+while(assert<u8>(au8)) {
+  au8++;
+  if(au8>2) {
+    break;
+  }
+}
 
-var i: i32;
+//i16 u16
+popcnt<i16>(1);
+popcnt<u16>(1);
+max<i16>(1, 2);
+max<u16>(1, 2);
+min<i16>(1, 2);
+min<u16>(1, 2);
+ceil<i16>(1);
+ceil<u16>(1);
+floor<i16>(1);
+floor<u16>(1);
+nearest<i16>(1);
+nearest<u16>(1);
+trunc<i16>(1);
+trunc<u16>(1);
+isNaN<i16>(1);
+isNaN<u16>(1);
+isFinite<i16>(1);
+isFinite<u16>(1);
+let ai16:i16 = 1;
+while(assert<i16>(ai16)) {
+  ai16++;
+  if(ai16>2) {
+    break;
+  }
+}
+let au16:u16 = 1;
+while(assert<u16>(au16)) {
+  au16++;
+  if(au16>2) {
+    break;
+  }
+}
+
+//usize isize
+popcnt<usize>(1);
+popcnt<isize>(1);
+rotl<usize>(1, 1);
+rotl<isize>(1, 1);
+rotr<usize>(1, 1);
+rotr<isize>(1, 1);
+ceil<usize>(1);
+ceil<isize>(1);
+floor<usize>(1);
+floor<isize>(1);
+nearest<usize>(1);
+nearest<isize>(1);
+reinterpret<usize>(1);
+reinterpret<isize>(1);
+trunc<usize>(1);
+trunc<isize>(1);
+isNaN<usize>(1);
+isNaN<isize>(1);
+isFinite<usize>(1);
+isFinite<isize>(1);
+
+let ausize:usize = 1;
+while(assert<usize>(ausize)) {
+  ausize++;
+  if(ausize>2) {
+    break;
+  }
+}
+let aisize:isize = 1;
+while(assert<isize>(aisize)) {
+  aisize++;
+  if(aisize>2) {
+    break;
+  }
+}
+// integers
 
 clz<i32>(1);
 ctz<i32>(1);
@@ -120,6 +224,13 @@ abs<isize>(-42);
 abs<u32>(42);
 eq<i64>(1, 0);
 ne<i64>(1, 0);
+let ai64:i64 = 1;
+while(assert<i64>(ai64)) {
+  ai64++;
+  if(ai64>2) {
+    break;
+  }
+}
 
 i64.clz(1);
 i64.ctz(1);
@@ -173,6 +284,13 @@ assert(isFinite<f32>(1.25) == true);
 assert(isFinite<f32>(Infinity) == false);
 assert(isFinite<f32>(-Infinity) == false);
 assert(isFinite<f32>(NaN) == false);
+let af32 = nearest<f32>(1.25);
+while(assert<f32>(af32)) {
+  af32++;
+  if(af32>2.0) {
+    break;
+  }
+}
 f32.NaN;
 f32.abs(1.25);
 f32.ceil(1.25);
@@ -241,6 +359,13 @@ assert(isFinite<f64>(1.25) == true);
 assert(isFinite<f64>(Infinity) == false);
 assert(isFinite<f64>(-Infinity) == false);
 assert(isFinite<f64>(NaN) == false);
+let af64 = nearest<f64>(1.25);
+while(assert<f64>(af64)) {
+  af64++;
+  if(af64>2.0) {
+    break;
+  }
+}
 f64.NaN;
 f64.abs(1.25);
 f64.ceil(1.25);
