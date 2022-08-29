@@ -223,6 +223,12 @@ function test_v128(): void {
     __free(ptr);
   }
   {
+    let ptr = __alloc(16);
+    store<i32>(ptr, 0x01020304);
+    let v: v128 = v128(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    assert(v128.load_lane<i32>(ptr, v, 0, 2, 1) == i32x4(0x0102, 0, 0, 0));
+  }
+  {
     let v: v128 = v128.ceil<f32>(f32x4(1.1, -0.25, 70.01, 4.0));
     assert(v == f32x4(2, -0.0, 71, 4));
   }
@@ -284,6 +290,36 @@ function test_v128(): void {
     assert(
       v128.bitmask<i64>(i64x2(-1, 0xF)) == 0x00000001
     );
+  }
+  {
+    let ptr = __alloc(4);
+    store<i32>(ptr, 0x01020304);
+    assert(
+      v128.load_zero<i32>(ptr, 1, 4)
+      ==
+      i32x4(0x010203, 0, 0, 0)
+    );
+    __free(ptr);
+  }
+  {
+    let ptr = __alloc(4);
+    store<i32>(ptr, 0x01020304);
+    assert(
+      v128.load_splat<i32>(ptr, 1, 4)
+      ==
+      i32x4(0x010203, 0x010203, 0x010203, 0x010203)
+    );
+    __free(ptr);
+  }
+  {
+    let ptr = __alloc(8);
+    store<i64>(ptr, 0x01020304_05060708);
+    assert(
+      v128.load_ext<i32>(ptr, 0, 8)
+      ==
+      i32x4(0x05060708, 0, 0x01020304, 0)
+    );
+    __free(ptr);
   }
   // TODO: missing C-API in Binaryen (see also passes/pass.ts)
   // v128.load8_lane
