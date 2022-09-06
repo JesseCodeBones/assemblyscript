@@ -1,4 +1,8 @@
 var str = "𐐷hi𤭢";
+var ÀÀ = "ÀÀ"; // two bytes
+var 中文变量 = "中文参数"; //three bytes
+
+
 // utf8  : f0 90 90 b7 68 69 f0 a4 ad a2 [00]
 // utf16 : d801_dc37 0068 0069 d852_df62
 

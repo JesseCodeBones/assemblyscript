@@ -227,6 +227,7 @@ function test_v128(): void {
     store<i32>(ptr, 0x01020304);
     let v: v128 = v128(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     assert(v128.load_lane<i32>(ptr, v, 0, 2, 1) == i32x4(0x0102, 0, 0, 0));
+    __free(ptr);
   }
   {
     let v: v128 = v128.ceil<f32>(f32x4(1.1, -0.25, 70.01, 4.0));

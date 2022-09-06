@@ -1609,6 +1609,7 @@ export class Resolver extends DiagnosticEmitter {
       case AssertionKind.NONNULL: {
         return this.lookupExpression(node.expression, ctxFlow, ctxType, reportMode);
       }
+      /* c8 ignore start */
       case AssertionKind.CONST: {
         // TODO: decide on the layout of ReadonlyArray first
         // let element = this.lookupExpression(node.expression, ctxFlow, ctxType, reportMode);
@@ -1624,6 +1625,7 @@ export class Resolver extends DiagnosticEmitter {
         );
         return null;
       }
+      /* c8 ignore stop */
     }
     assert(false);
     return null;
@@ -1654,6 +1656,7 @@ export class Resolver extends DiagnosticEmitter {
         let type = this.resolveExpression(node.expression, ctxFlow, ctxType, reportMode);
         return type ? type.nonNullableType : null;
       }
+      /* c8 ignore start */
       case AssertionKind.CONST: {
         let element = this.lookupExpression(node, ctxFlow, ctxType, reportMode);
         if (!element) return null;
@@ -1668,6 +1671,7 @@ export class Resolver extends DiagnosticEmitter {
         }
         return type;
       }
+      /* c8 ignore stop */
       default: assert(false);
     }
     return null;
@@ -2136,7 +2140,7 @@ export class Resolver extends DiagnosticEmitter {
     }
     return null;
   }
-
+/* c8 ignore start */
   /** Resolves a super expression to its static type. */
   private resolveSuperExpression(
     /** The expression to resolve. */
@@ -2161,7 +2165,7 @@ export class Resolver extends DiagnosticEmitter {
     }
     return type;
   }
-
+/* c8 ignore stop */
   /** Looks up the program element the specified literal expression refers to. */
   private lookupLiteralExpression(
     /** The expression to look up. */
@@ -3232,6 +3236,7 @@ export class Resolver extends DiagnosticEmitter {
       }
     }
 
+/* c8 ignore start */
     // Check that property getters and setters match
     for (let i = 0, k = properties.length; i < k; ++i) {
       let property = properties[i];
@@ -3251,7 +3256,7 @@ export class Resolver extends DiagnosticEmitter {
         }
       }
     }
-
+/* c8 ignore stop */
     if (instance.kind != ElementKind.INTERFACE) {
 
       // Check that all required members are implemented

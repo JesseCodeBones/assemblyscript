@@ -6,7 +6,7 @@
     ],
     "reportsDirectory": "./coverage",
     "src": [
-        "src"
+        "src/**/*"
     ],
     "exclude": [
         "std/**/*",

@@ -1193,6 +1193,7 @@ export class Module {
     op: UnaryOp,
     value: ExpressionRef
   ): ExpressionRef {
+     /* c8 ignore start */
     if (op > UnaryOp._last) {
       let isWam64 = this.sizeType == TypeRef.I64;
       switch (op) {
@@ -1203,6 +1204,7 @@ export class Module {
       }
       assert(false);
     }
+     /* c8 ignore stop */
     return binaryen._BinaryenUnary(this.ref, op, value);
   }
 
@@ -1211,6 +1213,7 @@ export class Module {
     left: ExpressionRef,
     right: ExpressionRef
   ): ExpressionRef {
+    /* c8 ignore start */
     if (op > BinaryOp._last) {
       let isWasm64 = this.sizeType == TypeRef.I64;
       switch (op) {
@@ -1242,6 +1245,7 @@ export class Module {
       }
       assert(false);
     }
+    /* c8 ignore stop */
     return binaryen._BinaryenBinary(this.ref, op, left, right);
   }
 
@@ -1252,7 +1256,7 @@ export class Module {
   memory_grow(delta: ExpressionRef): ExpressionRef {
     return binaryen._BinaryenMemoryGrow(this.ref, delta);
   }
-
+  /* c8 ignore start */
   table_size(name: string): ExpressionRef {
     var cStr = this.allocStringCached(name);
     return binaryen._BinaryenTableSize(this.ref, cStr);
@@ -1262,7 +1266,7 @@ export class Module {
     var cStr = this.allocStringCached(name);
     return binaryen._BinaryenTableGrow(this.ref, cStr, value, delta);
   }
-
+  /* c8 ignore stop */
   local_get(
     index: i32,
     type: TypeRef
@@ -1299,7 +1303,7 @@ export class Module {
     var cStr = this.allocStringCached(name);
     return binaryen._BinaryenGlobalGet(this.ref, cStr, type);
   }
-
+/* c8 ignore start */
   table_get(
     name: string,
     index: ExpressionRef,
@@ -1308,7 +1312,7 @@ export class Module {
     var cStr = this.allocStringCached(name);
     return binaryen._BinaryenTableGet(this.ref, cStr, index, type);
   }
-
+/* c8 ignore stop */
   load(
     bytes: Index,
     signed: bool,
@@ -1371,7 +1375,7 @@ export class Module {
   ): ExpressionRef {
     return binaryen._BinaryenAtomicCmpxchg(this.ref, bytes, offset, ptr, expected, replacement, type);
   }
-
+/* c8 ignore start */
   atomic_wait(
     ptr: ExpressionRef,
     expected: ExpressionRef,
@@ -1391,7 +1395,7 @@ export class Module {
   atomic_fence(): ExpressionRef {
     return binaryen._BinaryenAtomicFence(this.ref);
   }
-
+/* c8 ignore stop */
   // statements
 
   local_set(
@@ -1412,7 +1416,7 @@ export class Module {
     var cStr = this.allocStringCached(name);
     return binaryen._BinaryenGlobalSet(this.ref, cStr, value);
   }
-
+/* c8 ignore start */
   table_set(
     name: string,
     index: ExpressionRef,
@@ -1421,7 +1425,7 @@ export class Module {
     var cStr = this.allocStringCached(name);
     return binaryen._BinaryenTableSet(this.ref, cStr, index, value);
   }
-
+/* c8 ignore stop */
   block(
     label: string | null,
     children: ExpressionRef[],
@@ -1572,7 +1576,7 @@ export class Module {
     binaryen._free(cArr);
     return ret;
   }
-
+/* c8 ignore start */
   return_call(
     target: string,
     operands: ExpressionRef[] | null,
@@ -1580,7 +1584,7 @@ export class Module {
   ): ExpressionRef {
     return this.call(target, operands, returnType, true);
   }
-
+/* c8 ignore stop */
   call_indirect(
     tableName: string | null,
     index: ExpressionRef,
@@ -1601,7 +1605,7 @@ export class Module {
     binaryen._free(cArr);
     return ret;
   }
-
+/* c8 ignore start */
   return_call_indirect(
     tableName: string | null,
     index: ExpressionRef,
@@ -1611,7 +1615,7 @@ export class Module {
   ): ExpressionRef {
     return this.call_indirect(tableName, index, operands, params, results, true);
   }
-
+/* c8 ignore stop */
   unreachable(): ExpressionRef {
     return binaryen._BinaryenUnreachable(this.ref);
   }
@@ -1634,8 +1638,8 @@ export class Module {
     return binaryen._BinaryenMemoryFill(this.ref, dest, value, size);
   }
 
+  /* c8 ignore start */
   // exception handling
-
   try(
     name: string | null,
     body: ExpressionRef,
@@ -1677,7 +1681,6 @@ export class Module {
     var cStr = this.allocStringCached(target);
     return binaryen._BinaryenRethrow(this.ref, cStr);
   }
-
   // multi value (pseudo instructions)
 
   pop(
@@ -1696,7 +1699,7 @@ export class Module {
   tuple_extract(tuple: ExpressionRef, index: Index): ExpressionRef {
     return binaryen._BinaryenTupleExtract(this.ref, tuple, index);
   }
-
+/* c8 ignore stop */
   // simd
 
   simd_extract(
@@ -1774,12 +1777,15 @@ export class Module {
     return binaryen._BinaryenRefIs(this.ref, op, expr);
   }
 
+  /* c8 ignore start */
   ref_as(
     op: RefAsOp,
     expr: ExpressionRef
   ): ExpressionRef {
     return binaryen._BinaryenRefAs(this.ref, op, expr);
   }
+  /* c8 ignore stop */
+
 
   ref_func(
     name: string,
@@ -1829,7 +1835,7 @@ export class Module {
   }
 
   // tags
-
+/* c8 ignore start */
   addTag(
     name: string,
     params: TypeRef,
@@ -1852,7 +1858,7 @@ export class Module {
     var cStr = this.allocStringCached(name);
     binaryen._BinaryenRemoveTag(this.ref, cStr);
   }
-
+/* c8 ignore stop */
   // functions
 
   addFunction(
@@ -1895,7 +1901,7 @@ export class Module {
   }
 
   private hasTemporaryFunction: bool = false;
-
+/* c8 ignore start */
   addTemporaryFunction(
     result: TypeRef,
     paramTypes: TypeRef[] | null,
@@ -1920,7 +1926,7 @@ export class Module {
     var tempName = this.allocStringCached("");
     binaryen._BinaryenRemoveFunction(this.ref, tempName);
   }
-
+/* c8 ignore stop */
   setStart(func: FunctionRef): void {
     binaryen._BinaryenSetStart(this.ref, func);
   }
@@ -1944,7 +1950,7 @@ export class Module {
     var cStr2 = this.allocStringCached(externalName);
     return binaryen._BinaryenAddTableExport(this.ref, cStr1, cStr2);
   }
-
+/* c8 ignore start */
   addMemoryExport(
     internalName: string,
     externalName: string
@@ -1953,7 +1959,7 @@ export class Module {
     var cStr2 = this.allocStringCached(externalName);
     return binaryen._BinaryenAddMemoryExport(this.ref, cStr1, cStr2);
   }
-
+/* c8 ignore stop */
   addGlobalExport(
     internalName: string,
     externalName: string
@@ -1962,7 +1968,7 @@ export class Module {
     var cStr2 = this.allocStringCached(externalName);
     return binaryen._BinaryenAddGlobalExport(this.ref, cStr1, cStr2);
   }
-
+/* c8 ignore start */
   addTagExport(
     internalName: string,
     externalName: string
@@ -1976,7 +1982,7 @@ export class Module {
     var cStr = this.allocStringCached(externalName);
     binaryen._BinaryenRemoveExport(this.ref, cStr);
   }
-
+/* c8 ignore stop */
   hasExport(externalName: string): bool {
     var cStr = this.allocStringCached(externalName);
     return binaryen._BinaryenGetExport(this.ref, cStr) != 0;
@@ -2032,7 +2038,7 @@ export class Module {
     var cStr3 = this.allocStringCached(externalBaseName);
     binaryen._BinaryenAddGlobalImport(this.ref, cStr1, cStr2, cStr3, globalType, mutable);
   }
-
+/* c8 ignore start */
   addTagImport(
     internalName: string,
     externalModuleName: string,
@@ -2047,7 +2053,7 @@ export class Module {
       this.ref, cStr1, cStr2, cStr3, params, results
     );
   }
-
+/* c8 ignore stop */
   // memory
 
   /** Unlimited memory constant. */
@@ -2143,7 +2149,7 @@ export class Module {
   } */
 
   // sections
-
+/* c8 ignore start */
   addCustomSection(name: string, contents: Uint8Array): void {
     var cStr = this.allocStringCached(name);
     var cArr = allocU8Array(contents);
@@ -2156,23 +2162,23 @@ export class Module {
   getOptimizeLevel(): i32 {
     return binaryen._BinaryenGetOptimizeLevel();
   }
-
+/* c8 ignore stop */
   setOptimizeLevel(level: i32): void {
     binaryen._BinaryenSetOptimizeLevel(level);
   }
-
+/* c8 ignore start */
   getShrinkLevel(): i32 {
     return binaryen._BinaryenGetShrinkLevel();
   }
-
+/* c8 ignore stop */
   setShrinkLevel(level: i32): void {
     binaryen._BinaryenSetShrinkLevel(level);
   }
-
+/* c8 ignore start */
   getDebugInfo(): boolean {
     return binaryen._BinaryenGetDebugInfo();
   }
-
+/* c8 ignore stop */
   setDebugInfo(on: bool): void {
     binaryen._BinaryenSetDebugInfo(on);
   }
@@ -2184,23 +2190,23 @@ export class Module {
   setLowMemoryUnused(on: bool): void {
     binaryen._BinaryenSetLowMemoryUnused(on);
   }
-
+/* c8 ignore start */
   getZeroFilledMemory(): bool {
     return binaryen._BinaryenGetZeroFilledMemory();
   }
-
+/* c8 ignore stop */
   setZeroFilledMemory(on: bool): void {
     binaryen._BinaryenSetZeroFilledMemory(on);
   }
-
+/* c8 ignore start */
   getFastMath(): bool {
     return binaryen._BinaryenGetFastMath();
   }
-
+/* c8 ignore stop */
   setFastMath(on: bool): void {
     binaryen._BinaryenSetFastMath(on);
   }
-
+/* c8 ignore start */
   getPassArgument(key: string): string | null {
     var cStr = this.allocStringCached(key);
     var ptr = binaryen._BinaryenGetPassArgument(cStr);
@@ -2212,39 +2218,39 @@ export class Module {
     var cStr2 = this.allocStringCached(value);
     binaryen._BinaryenSetPassArgument(cStr1, cStr2);
   }
-
+/* c8 ignore stop */
   clearPassArguments(): void {
     binaryen._BinaryenClearPassArguments();
   }
-
+/* c8 ignore start */
   getAlwaysInlineMaxSize(): Index {
     return binaryen._BinaryenGetAlwaysInlineMaxSize();
   }
-
+/* c8 ignore stop */
   setAlwaysInlineMaxSize(size: Index): void {
     binaryen._BinaryenSetAlwaysInlineMaxSize(size);
   }
-
+/* c8 ignore start */
   getFlexibleInlineMaxSize(): Index {
     return binaryen._BinaryenGetFlexibleInlineMaxSize();
   }
-
+/* c8 ignore stop */
   setFlexibleInlineMaxSize(size: Index): void {
     binaryen._BinaryenSetFlexibleInlineMaxSize(size);
   }
-
+/* c8 ignore start */
   getOneCallerInlineMaxSize(): Index {
     return binaryen._BinaryenGetOneCallerInlineMaxSize();
   }
-
+/* c8 ignore stop */
   setOneCallerInlineMaxSize(size: Index): void {
     binaryen._BinaryenSetOneCallerInlineMaxSize(size);
   }
-
+/* c8 ignore start */
   getAllowInliningFunctionsWithLoops(): bool {
     return binaryen._BinaryenGetAllowInliningFunctionsWithLoops();
   }
-
+/* c8 ignore stop */
   setAllowInliningFunctionsWithLoops(enabled: bool): void {
     binaryen._BinaryenSetAllowInliningFunctionsWithLoops(enabled);
   }
@@ -2484,7 +2490,7 @@ export class Module {
   validate(): bool {
     return binaryen._BinaryenModuleValidate(this.ref) == 1;
   }
-
+/* c8 ignore start */
   interpret(): void {
     binaryen._BinaryenModuleInterpret(this.ref);
   }
@@ -2509,7 +2515,7 @@ export class Module {
   toText(watFormat: bool = true): string {
     throw new Error("not implemented"); // JS glue overrides this
   }
-
+/* c8 ignore stop */
   private cachedStringsToPointers: Map<string,usize> = new Map();
   private cachedPointersToStrings: Map<usize,string | null> = new Map();
 
@@ -2532,7 +2538,7 @@ export class Module {
     cached.set(ptr, str);
     return str;
   }
-
+/* c8 ignore start */
   dispose(): void {
     assert(this.ref);
     // TODO: for (let ptr of this.cachedStrings.values()) {
@@ -2550,7 +2556,7 @@ export class Module {
   createRelooper(): Relooper {
     return Relooper.create(this);
   }
-
+/* c8 ignore stop */
   /** Makes a copy of a trivial expression (doesn't contain subexpressions). Returns `0` if non-trivial. */
   tryCopyTrivialExpression(expr: ExpressionRef): ExpressionRef {
     switch (binaryen._BinaryenExpressionGetId(expr)) {
@@ -2777,7 +2783,7 @@ export function getLoadPtr(expr: ExpressionRef): ExpressionRef {
 export function isLoadSigned(expr: ExpressionRef): bool {
   return binaryen._BinaryenLoadIsSigned(expr);
 }
-
+/* c8 ignore start */
 export function getStoreBytes(expr: ExpressionRef): u32 {
   return binaryen._BinaryenStoreGetBytes(expr);
 }
@@ -2793,7 +2799,7 @@ export function getStorePtr(expr: ExpressionRef): ExpressionRef {
 export function getStoreValue(expr: ExpressionRef): ExpressionRef {
   return binaryen._BinaryenStoreGetValue(expr);
 }
-
+/* c8 ignore stop */
 export function getBlockName(expr: ExpressionRef): string | null {
   return readString(binaryen._BinaryenBlockGetName(expr));
 }
@@ -2817,7 +2823,7 @@ export function getIfTrue(expr: ExpressionRef): ExpressionRef {
 export function getIfFalse(expr: ExpressionRef): ExpressionRef {
   return binaryen._BinaryenIfGetIfFalse(expr);
 }
-
+/* c8 ignore start */
 export function getLoopName(expr: ExpressionRef): string | null {
   return readString(binaryen._BinaryenLoopGetName(expr));
 }
@@ -2833,7 +2839,7 @@ export function getBreakName(expr: ExpressionRef): string | null {
 export function getBreakCondition(expr: ExpressionRef): ExpressionRef {
   return binaryen._BinaryenBreakGetCondition(expr);
 }
-
+/* c8 ignore stop */
 export function getSelectThen(expr: ExpressionRef): ExpressionRef {
   return binaryen._BinaryenSelectGetIfTrue(expr);
 }
@@ -2841,7 +2847,7 @@ export function getSelectThen(expr: ExpressionRef): ExpressionRef {
 export function getSelectElse(expr: ExpressionRef): ExpressionRef {
   return binaryen._BinaryenSelectGetIfFalse(expr);
 }
-
+/* c8 ignore start */
 export function getSelectCondition(expr: ExpressionRef): ExpressionRef {
   return binaryen._BinaryenSelectGetCondition(expr);
 }
@@ -2853,7 +2859,7 @@ export function getDropValue(expr: ExpressionRef): ExpressionRef {
 export function getReturnValue(expr: ExpressionRef): ExpressionRef {
   return binaryen._BinaryenReturnGetValue(expr);
 }
-
+/* c8 ignore stop */
 export function getCallTarget(expr: ExpressionRef): string | null {
   return readString(binaryen._BinaryenCallGetTarget(expr));
 }
@@ -2869,7 +2875,7 @@ export function getCallOperandAt(expr: ExpressionRef, index: Index): ExpressionR
 export function getMemoryGrowDelta(expr: ExpressionRef): ExpressionRef {
   return binaryen._BinaryenMemoryGrowGetDelta(expr);
 }
-
+/* c8 ignore start */
 // functions
 
 export function getFunctionBody(func: FunctionRef): ExpressionRef {
@@ -2906,11 +2912,11 @@ export function getGlobalName(global: GlobalRef): string | null {
 export function getGlobalType(global: GlobalRef): TypeRef {
   return binaryen._BinaryenGlobalGetType(global);
 }
-
+/* c8 ignore stop */
 export function isGlobalMutable(global: GlobalRef): bool {
   return binaryen._BinaryenGlobalIsMutable(global);
 }
-
+/* c8 ignore start */
 export function getGlobalInit(global: GlobalRef): ExpressionRef {
   return binaryen._BinaryenGlobalGetInitExpr(global);
 }
@@ -2973,7 +2979,7 @@ export class Relooper {
     return binaryen._RelooperRenderAndDispose(this.ref, entry, labelHelper);
   }
 }
-
+/* c8 ignore stop */
 /** Builds a switch using a sequence of `br_if`s. */
 export class SwitchBuilder {
   // This is useful because Binaryen understands sequences of `br_if`s and
@@ -3005,7 +3011,7 @@ export class SwitchBuilder {
     this.values.push(value);
     this.indexes.push(index);
   }
-
+/* c8 ignore start */
   /** Links the default branch. */
   addDefault(code: ExpressionRef[]): void {
     assert(this.defaultIndex == -1);
@@ -3013,7 +3019,7 @@ export class SwitchBuilder {
     this.defaultIndex = cases.length;
     cases.push(code);
   }
-
+/* c8 ignore stop */
   /** Renders the switch to a block. */
   render(localIndex: i32, labelPostfix: string = ""): ExpressionRef {
     var module = this.module;
@@ -3104,7 +3110,7 @@ function allocU8Array(u8s: Uint8Array | null): usize {
   }
   return ptr;
 }
-
+/* c8 ignore start */
 function allocI32Array(i32s: i32[] | null): usize {
   if (!i32s) return 0;
   var len = i32s.length;
@@ -3117,7 +3123,7 @@ function allocI32Array(i32s: i32[] | null): usize {
   }
   return ptr;
 }
-
+/* c8 ignore stop */
 function allocU32Array(u32s: u32[] | null): usize {
   if (!u32s) return 0;
   var len = u32s.length;
@@ -3206,7 +3212,7 @@ function allocString(str: string | null): usize {
   binaryen.__i32_store8(idx, 0); // \0
   return ptr;
 }
-
+/* c8 ignore start */
 function readBuffer(ptr: usize, len: i32): Uint8Array {
   var ret = new Uint8Array(len);
   for (let i = 0; i < len; ++i) {
@@ -3214,7 +3220,7 @@ function readBuffer(ptr: usize, len: i32): Uint8Array {
   }
   return ret;
 }
-
+/* c8 ignore stop */
 export function readString(ptr: usize): string | null {
   if (!ptr) return null;
   var arr = new Array<i32>();
@@ -3253,7 +3259,7 @@ export function readString(ptr: usize): string | null {
   // TODO: implement and use String.fromCodePoints
   return String.fromCharCodes(arr);
 }
-
+/* c8 ignore start */
 /** Result structure of {@link Module#toBinary}. */
 export class BinaryModule {
   constructor(
@@ -3263,7 +3269,7 @@ export class BinaryModule {
     public sourceMap: string | null
   ) {}
 }
-
+/* c8 ignore stop */
 /** Tests if an expression needs an explicit 'unreachable' when it is the terminating statement. */
 export function needsExplicitUnreachable(expr: ExpressionRef): bool {
   // not applicable if pushing a value to the stack
