@@ -949,12 +949,14 @@ export class Resolver extends DiagnosticEmitter {
           ctxFlow, ctxType, reportMode
         );
       }
+      /* c8 ignore start */
       case NodeKind.INSTANCEOF: {
         return this.lookupInstanceOfExpression(
           <InstanceOfExpression>node,
           ctxFlow, ctxType, reportMode
         );
       }
+      /* c8 ignore stop */
       case NodeKind.LITERAL: {
         return this.lookupLiteralExpression(
           <LiteralExpression>node,
@@ -1271,12 +1273,14 @@ export class Resolver extends DiagnosticEmitter {
         target = classReference;
         break;
       }
+      /* c8 ignore start */
       case ElementKind.PROPERTY_PROTOTYPE: { // SomeClass.prop
         let propertyInstance = this.resolveProperty(<PropertyPrototype>target, reportMode);
         if (!propertyInstance) return null;
         target = propertyInstance;
         // fall-through
       }
+      /* c8 ignore stop */
       case ElementKind.PROPERTY: { // someInstance.prop
         let propertyInstance = <Property>target;
         let getterInstance = assert(propertyInstance.getterInstance); // must have a getter
@@ -1374,6 +1378,8 @@ export class Resolver extends DiagnosticEmitter {
             this.currentElementExpression = null;
             return member; // instance FIELD, static GLOBAL, FUNCTION_PROTOTYPE, PROPERTY...
           }
+          /* c8 ignore start */
+          // class prototype is not supported
           // traverse inherited static members on the base prototype if target is a class prototype
           if (
             target.kind == ElementKind.CLASS_PROTOTYPE ||
@@ -1387,7 +1393,9 @@ export class Resolver extends DiagnosticEmitter {
               break;
             }
           // traverse inherited instance members on the base class if target is a class instance
-          } else if (
+          } 
+          /* c8 ignore stop */
+          else if (
             target.kind == ElementKind.CLASS ||
             target.kind == ElementKind.INTERFACE
           ) {
@@ -2400,7 +2408,7 @@ export class Resolver extends DiagnosticEmitter {
     var expressions = node.expressions;
     return this.resolveExpression(expressions[assert(expressions.length) - 1], ctxFlow, ctxType, reportMode);
   }
-
+  /* c8 ignore start */
   /** Looks up the program element the specified instanceof expression refers to. */
   private lookupInstanceOfExpression(
     /** The expression to look up. */
@@ -2414,7 +2422,7 @@ export class Resolver extends DiagnosticEmitter {
   ): Element | null {
     return assert(Type.bool.getClassOrWrapper(this.program));
   }
-
+/* c8 ignore stop */
   /** Resolves an instanceof expression to its static type. */
   private resolveInstanceOfExpression(
     /** The expression to resolve. */

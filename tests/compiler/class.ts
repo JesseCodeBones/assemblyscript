@@ -42,8 +42,8 @@ export function testGenericInitializer(): void {
 }
 
 class PropertyPrototypeClass {
-  private static _one: i32 = 10;
-  two: i32 = 2 as const;
+  private static _one: i32 = 1;
+  two: i32 = 2;
   private _three: i32 = 11;
   static get one(): i32 { return PropertyPrototypeClass._one; }
   static set one(a: i32) {
@@ -52,7 +52,7 @@ class PropertyPrototypeClass {
   get three(): i32 { return this._three; }
   set three(a: i32) { this._three = a; }
   changeOne(): void {
-    PropertyPrototypeClass.one = 11;
+    PropertyPrototypeClass.one += 1;
   }
   getThree(): i32 {
     return [this].at(0)._three;
@@ -63,6 +63,7 @@ class PropertyPrototypeClass {
 
 let a = new PropertyPrototypeClass();
 assert([a instanceof PropertyPrototypeClass][0]);
+assert([(PropertyPrototypeClass.one)][0] == 1)
 let zero = i32(0);
 while (a.three = zero) {
   zero = 1;
@@ -75,5 +76,6 @@ assert(a.getThree() == 0);
 assert([a.three][0] == 0);
 assert(zero == 0);
 a.changeOne();
-assert(PropertyPrototypeClass.one == 11);
-assert([PropertyPrototypeClass.one].at(0) == 11);
+assert(PropertyPrototypeClass.one == 2);
+assert([PropertyPrototypeClass.one].at(0) == 2);
+assert(typeof (a, zero) == "number");

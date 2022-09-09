@@ -151,6 +151,11 @@ function testUTF8DecodeUnsafe(): void {
   assert(String.UTF8.decodeUnsafe(ptr + 10, 100, true) == "");
 }
 testUTF8DecodeUnsafe();
+function testExtendedUnicode(): void {
+  let a:string = "\u{00c8}\u{00c8}";
+  assert(a == "ÈÈ");
+}
+testExtendedUnicode();
 
 function testLarge(str: string): void {
   var buf8 = String.UTF8.encode(str);

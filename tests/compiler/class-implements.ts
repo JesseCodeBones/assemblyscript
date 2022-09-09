@@ -18,3 +18,14 @@ class C extends B implements I {
 
 var c = new C();
 assert(c.foo() == 2);
+
+
+class Nissan implements Car {
+  getHeight(): i32 { return 1; }
+}
+
+interface Car {
+  getHeight(): i32;
+}
+
+let nissan = new Nissan(); 
