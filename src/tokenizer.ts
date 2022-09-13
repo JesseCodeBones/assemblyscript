@@ -384,6 +384,8 @@ export function isIllegalVariableIdentifier(name: string): bool {
   return false;
 }
 
+/* c8 ignore start */
+// token to string are usually used for exception message promtion, skip this part
 export function operatorTokenToString(token: Token): string {
   switch (token) {
     case Token.DELETE: return "delete";
@@ -440,7 +442,7 @@ export function operatorTokenToString(token: Token): string {
     }
   }
 }
-
+/* c8 ignore stop */
 export class Range {
 
   start: i32;
@@ -467,11 +469,13 @@ export class Range {
     return this.source == other.source && this.start == other.start && this.end == other.end;
   }
 
+  /* c8 ignore start */
   get atStart(): Range {
     let range = new Range(this.start, this.start);
     range.source = this.source;
     return range;
   }
+  /* c8 ignore stop */
 
   get atEnd(): Range {
     let range = new Range(this.end, this.end);
