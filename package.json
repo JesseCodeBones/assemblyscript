@@ -85,7 +85,10 @@
     "bootstrap": "npm run bootstrap:debug && npm run bootstrap:release",
     "bootstrap:debug": "node bin/asc --config src/asconfig.json --target debug && node bin/asc --config src/asconfig.json --target debug-bootstrap --wasm ./build/assemblyscript.debug.js && node bin/asc --config src/asconfig.json --target debug-bootstrap --wasm ./build/assemblyscript.debug-bootstrap.js && git --no-pager diff --no-index build/assemblyscript.debug.wast build/assemblyscript.debug-bootstrap.wast",
     "bootstrap:release": "node bin/asc --config src/asconfig.json --target release && node bin/asc --config src/asconfig.json --target release-bootstrap --wasm ./build/assemblyscript.release.js && node bin/asc --config src/asconfig.json --target release-bootstrap --wasm ./build/assemblyscript.release-bootstrap.js && git --no-pager diff --no-index build/assemblyscript.release.wast build/assemblyscript.release-bootstrap.wast",
-    "bootstrap:rtraced": "node bin/asc --config src/asconfig.json --target rtraced && node bin/asc --config src/asconfig.json --target rtraced --wasm ./build/assemblyscript.rtraced.js"
+    "bootstrap:rtraced": "node bin/asc --config src/asconfig.json --target rtraced && node bin/asc --config src/asconfig.json --target rtraced --wasm ./build/assemblyscript.rtraced.js",
+    "memory":"npm run build && npm run defaultMM && npm run defaultMMRun",
+    "defaultMM":"cd tests/allocators/default && npm run build",
+    "defaultMMRun":"cd tests/allocators && npm run test default"
   },
   "files": [
     "bin/",
