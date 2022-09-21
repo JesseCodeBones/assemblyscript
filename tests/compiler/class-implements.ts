@@ -29,3 +29,6 @@ interface Car {
 }
 
 let nissan = new Nissan(); 
+
+abstract class D {}
+let d = new D();

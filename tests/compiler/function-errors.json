@@ -1,0 +1,8 @@
+{
+  "asc_flags": [
+  ],
+  "stderr": [
+    "TS2554: Expected 2 arguments, but got 0.",
+    "TS2332: 'this' cannot be referenced in current location."
+  ]
+}

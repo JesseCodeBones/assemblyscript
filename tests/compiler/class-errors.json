@@ -1,0 +1,9 @@
+{
+  "asc_flags": [
+  ],
+  "stderr": [
+    "TS2540: Cannot assign to 'class-errors/A#a' because it is a constant or a read-only property.",
+    "TS2335: 'super' can only be referenced in a derived class.",
+    "TS17011: 'super' must be called before accessing a property of 'super' in the constructor of a derived class."
+  ]
+}
