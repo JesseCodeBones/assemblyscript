@@ -19,32 +19,6 @@ import { E_ALLOCATION_TOO_LARGE } from "../util/error";
     size: usize;
 }
 
-function logBlock(ptr: usize): void {
-    log("------ block item ------");
-    log("ptr:");
-    logi(ptr);
-    let block = changetype<Block>(ptr);
-    log("prev:");
-    logi(changetype<usize>(block.prev));
-    log("next:");
-    logi(changetype<usize>(block.next));
-    log("size:");
-    logi(block.size);
-    log("~~~~~~ block item ~~~~~~");
-}
-
-function logLinkedList(ptr: usize): void {
-    log("------ linked list item ------");
-    log("ptr:");
-    logi(ptr);
-    let ll = changetype<LinkedList>(ptr);
-    log("prev:");
-    logi(changetype<usize>(ll.prev));
-    log("next:");
-    logi(changetype<usize>(ll.next));
-    log("~~~~~~ linked list item ~~~~~~");
-}
-
 var freeListPtr: usize = memory.data(sizeof<LinkedList>());
 // var endPtr: usize = memory.data(sizeof<usize>()); // store the end ptr of the linear memory
 // @ts-ignore: decorator
