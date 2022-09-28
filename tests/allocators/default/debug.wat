@@ -475,16 +475,21 @@
  )
  (func $~lib/rt/freertos/__free (param $ptr i32)
   (local $blockPtr i32)
+  (local $blockLinkedList i32)
   (local $foundPos i32)
-  (local $var$3 i32)
   (local $var$4 i32)
   (local $var$5 i32)
+  (local $var$6 i32)
   (local $endBlock i32)
   (local $endPtr i32)
-  (local $var$8 i32)
   (local $var$9 i32)
   (local $var$10 i32)
   (local $var$11 i32)
+  (local $var$12 i32)
+  (local $var$13 i32)
+  (local $var$14 i32)
+  (local $var$15 i32)
+  (local $var$16 i32)
   local.get $ptr
   i32.eqz
   if
@@ -494,43 +499,45 @@
   i32.const 12
   i32.sub
   local.set $blockPtr
+  local.get $blockPtr
+  local.set $blockLinkedList
   i32.const 0
   local.set $foundPos
   global.get $~lib/rt/freertos/freelist
   i32.load $0 offset=4
-  local.set $var$3
+  local.set $var$4
   block $for-break0
    loop $for-loop|0
-    local.get $var$3
-    global.get $~lib/rt/freertos/freelist
+    local.get $var$4
+    global.get $~lib/rt/freertos/freeListPtr
     i32.ne
     if (result i32)
-     local.get $var$3
+     local.get $var$4
      i32.load $0 offset=4
      i32.const 0
      i32.ne
     else
      i32.const 0
     end
-    local.set $var$4
-    local.get $var$4
+    local.set $var$5
+    local.get $var$5
     if
-     local.get $var$3
+     local.get $var$4
      local.get $blockPtr
      i32.gt_u
      if
-      local.get $blockPtr
+      local.get $blockLinkedList
       local.set $endPtr
-      local.get $var$3
+      local.get $var$4
       i32.load $0
       local.set $endBlock
-      local.get $var$3
-      local.set $var$5
-      local.get $var$5
+      local.get $var$4
+      local.set $var$6
+      local.get $var$6
       local.get $endPtr
       call $~lib/rt/freertos/LinkedList#set:prev
       local.get $endPtr
-      local.get $var$5
+      local.get $var$6
       call $~lib/rt/freertos/LinkedList#set:next
       local.get $endPtr
       local.get $endBlock
@@ -542,9 +549,9 @@
       local.set $foundPos
       br $for-break0
      end
-     local.get $var$3
+     local.get $var$4
      i32.load $0 offset=4
-     local.set $var$3
+     local.set $var$4
      br $for-loop|0
     end
    end
@@ -552,18 +559,18 @@
   local.get $foundPos
   i32.eqz
   if
-   local.get $blockPtr
+   local.get $blockLinkedList
    local.set $endPtr
    global.get $~lib/rt/freertos/freelist
    i32.load $0
    local.set $endBlock
    global.get $~lib/rt/freertos/freelist
-   local.set $var$5
-   local.get $var$5
+   local.set $var$6
+   local.get $var$6
    local.get $endPtr
    call $~lib/rt/freertos/LinkedList#set:prev
    local.get $endPtr
-   local.get $var$5
+   local.get $var$6
    call $~lib/rt/freertos/LinkedList#set:next
    local.get $endPtr
    local.get $endBlock
@@ -572,14 +579,14 @@
    local.get $endPtr
    call $~lib/rt/freertos/LinkedList#set:next
   end
-  global.get $~lib/rt/freertos/freelist
+  global.get $~lib/rt/freertos/freeListPtr
   local.set $endPtr
   global.get $~lib/rt/freertos/freelist
   i32.load $0 offset=4
   local.set $endBlock
   loop $for-loop|1
    local.get $endBlock
-   global.get $~lib/rt/freertos/freelist
+   global.get $~lib/rt/freertos/freeListPtr
    i32.ne
    if (result i32)
     local.get $endBlock
@@ -589,78 +596,154 @@
    else
     i32.const 0
    end
-   local.set $var$5
-   local.get $var$5
+   local.set $var$6
+   local.get $var$6
    if
     local.get $endBlock
-    local.set $var$3
-    i32.const 0
     local.set $var$4
-    local.get $var$3
+    local.get $var$4
+    local.set $var$5
+    i32.const 0
+    local.set $var$9
+    local.get $endBlock
     i32.load $0
-    global.get $~lib/rt/freertos/freelist
+    local.set $var$10
+    local.get $var$10
+    global.get $~lib/rt/freertos/freeListPtr
     i32.ne
     if
-     local.get $endBlock
-     i32.load $0
-     local.set $var$8
-     local.get $var$8
+     local.get $var$10
+     local.set $var$11
+     local.get $var$11
      i32.load $0 offset=8
      i32.const 12
      i32.add
-     local.get $endBlock
-     i32.load $0
+     local.get $var$10
      i32.add
-     local.get $endBlock
+     local.get $var$4
      i32.eq
      if
-      local.get $var$8
-      local.get $var$8
+      local.get $var$11
+      local.get $var$11
       i32.load $0 offset=8
       i32.const 12
       i32.add
-      local.get $var$3
+      local.get $var$5
       i32.load $0 offset=8
       i32.add
       call $~lib/rt/freertos/Block#set:size
       local.get $endBlock
-      local.set $var$9
-      local.get $var$9
+      local.set $var$12
+      local.get $var$12
       i32.load $0
-      local.set $var$10
-      local.get $var$9
+      local.set $var$13
+      local.get $var$12
       i32.load $0 offset=4
-      local.set $var$11
-      local.get $var$10
+      local.set $var$14
+      local.get $var$13
       if (result i32)
-       local.get $var$11
+       local.get $var$14
       else
        i32.const 0
       end
       if
-       local.get $var$10
-       local.get $var$11
+       local.get $var$13
+       local.get $var$14
        call $~lib/rt/freertos/LinkedList#set:next
-       local.get $var$11
-       local.get $var$10
+       local.get $var$14
+       local.get $var$13
        call $~lib/rt/freertos/LinkedList#set:prev
-       local.get $var$9
+       local.get $var$12
        i32.const 0
        call $~lib/rt/freertos/LinkedList#set:prev
-       local.get $var$9
+       local.get $var$12
        i32.const 0
        call $~lib/rt/freertos/LinkedList#set:next
       else
        unreachable
       end
       i32.const 1
-      local.set $var$4
+      local.set $var$9
+     end
+     local.get $var$11
+     local.get $var$11
+     i32.load $0 offset=8
+     i32.add
+     i32.const 12
+     i32.add
+     local.set $var$14
+     local.get $var$14
+     i32.const 1
+     i32.const 16
+     i32.shl
+     i32.rem_u
+     i32.const 0
+     i32.eq
+     if (result i32)
+      local.get $var$4
+      local.get $var$14
+      i32.sub
+      i32.const 4
+      i32.sub
+      i32.const 12
+      i32.lt_u
+     else
+      i32.const 0
+     end
+     if
+      local.get $var$5
+      local.get $var$5
+      i32.load $0 offset=8
+      i32.add
+      i32.const 12
+      i32.add
+      local.set $var$13
+      local.get $var$11
+      local.get $var$11
+      i32.load $0 offset=8
+      local.get $var$13
+      local.get $var$14
+      i32.sub
+      i32.add
+      call $~lib/rt/freertos/Block#set:size
+      local.get $endBlock
+      local.set $var$12
+      local.get $var$12
+      i32.load $0
+      local.set $var$15
+      local.get $var$12
+      i32.load $0 offset=4
+      local.set $var$16
+      local.get $var$15
+      if (result i32)
+       local.get $var$16
+      else
+       i32.const 0
+      end
+      if
+       local.get $var$15
+       local.get $var$16
+       call $~lib/rt/freertos/LinkedList#set:next
+       local.get $var$16
+       local.get $var$15
+       call $~lib/rt/freertos/LinkedList#set:prev
+       local.get $var$12
+       i32.const 0
+       call $~lib/rt/freertos/LinkedList#set:prev
+       local.get $var$12
+       i32.const 0
+       call $~lib/rt/freertos/LinkedList#set:next
+      else
+       unreachable
+      end
+      i32.const 1
+      local.set $var$9
      end
     end
-    local.get $var$4
+    local.get $var$9
     i32.eqz
     if
-     local.get $endBlock
+     local.get $var$4
      local.set $endPtr
     end
     local.get $endBlock
@@ -673,7 +756,7 @@
   local.set $endBlock
   local.get $endBlock
   i32.load $0 offset=4
-  global.get $~lib/rt/freertos/freelist
+  global.get $~lib/rt/freertos/freeListPtr
   i32.ne
   if (result i32)
    local.get $endBlock
@@ -701,30 +784,30 @@
    call $~lib/rt/freertos/Block#set:size
    local.get $endBlock
    i32.load $0 offset=4
-   local.set $var$9
-   local.get $var$9
+   local.set $var$12
+   local.get $var$12
    i32.load $0
-   local.set $var$5
-   local.get $var$9
+   local.set $var$6
+   local.get $var$12
    i32.load $0 offset=4
-   local.set $var$4
-   local.get $var$5
+   local.set $var$10
+   local.get $var$6
    if (result i32)
-    local.get $var$4
+    local.get $var$10
    else
     i32.const 0
    end
    if
-    local.get $var$5
-    local.get $var$4
+    local.get $var$6
+    local.get $var$10
     call $~lib/rt/freertos/LinkedList#set:next
-    local.get $var$4
-    local.get $var$5
+    local.get $var$10
+    local.get $var$6
     call $~lib/rt/freertos/LinkedList#set:prev
-    local.get $var$9
+    local.get $var$12
     i32.const 0
     call $~lib/rt/freertos/LinkedList#set:prev
-    local.get $var$9
+    local.get $var$12
     i32.const 0
     call $~lib/rt/freertos/LinkedList#set:next
    else

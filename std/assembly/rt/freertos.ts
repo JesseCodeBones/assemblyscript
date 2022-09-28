@@ -106,7 +106,7 @@ function initialize(): void {
     let item: LinkedList = changetype<LinkedList>(startPoint);
     insertItem(item, freelist, freelist);
     let block: Block = changetype<Block>(startPoint);
-    block.size = (memory.size() << 16) - offsetof<Block>() - startPoint;
+    block.size = (<usize>(memory.size() << 16)) - offsetof<Block>() - startPoint;
 
 }
 
@@ -174,83 +174,52 @@ function initialize(): void {
     export function __free(ptr: usize): void {
     if (!ptr) unreachable(); // cannot be nullptr
     let blockPtr = ptr - offsetof<Block>();
+    let blockLinkedList = changetype<LinkedList>(blockPtr);
     var foundPos: bool = false;
     for (let item = changetype<LinkedList>(changetype<usize>(freelist.next));
-        changetype<usize>(item) != changetype<usize>(freelist) && item.next != null;
+        changetype<usize>(item) != freeListPtr && item.next != null;
         item = item.next) {
         if (changetype<usize>(item) > blockPtr) {
-            insertItem(changetype<LinkedList>(blockPtr), item.prev, item);
+            insertItem(blockLinkedList, item.prev, item);
             foundPos = true;
             break;
         }
     }
     if (!foundPos) { // add to tail
-        insertItem(changetype<LinkedList>(blockPtr), freelist.prev, freelist);
+        insertItem(blockLinkedList, freelist.prev, freelist);
     }
-    let endPtr = changetype<usize>(freelist);
+    let endPtr = freeListPtr;
     for (let item = changetype<LinkedList>(changetype<usize>(freelist.next));
-        changetype<usize>(item) != changetype<usize>(freelist) && item.next != null;
+        changetype<usize>(item) != freeListPtr && item.next != null;
         item = item.next) {
-        let block = changetype<Block>(changetype<usize>(item));
+        let blockPtr = changetype<usize>(item);
+        let block = changetype<Block>(blockPtr);
         let droped = false;
-        if (changetype<usize>(block.prev) != changetype<usize>(freelist)) {
-            let prevBlock = changetype<Block>(changetype<usize>(item.prev));
-            if ((prevBlock.size + offsetof<Block>() + changetype<usize>(item.prev)) == changetype<usize>(item)) {
+        let prevPtr = changetype<usize>(item.prev);
+        if (prevPtr != freeListPtr) {
+            let prevBlock = changetype<Block>(prevPtr);
+            if ((prevBlock.size + offsetof<Block>() + prevPtr) == blockPtr) {
                 prevBlock.size = (prevBlock.size + offsetof<Block>() + block.size);
+                dropItem(item);
+                droped = true;
+            }
+            let prevTailPtr = changetype<usize>(prevBlock) + prevBlock.size + offsetof<Block>();
+            if (prevTailPtr % (1 << 16) == 0 //page end
+                && ((blockPtr - prevTailPtr - 4) < offsetof<Block>()) // page begin
+            ) {
+                let tailPtr = changetype<usize>(block) + block.size + offsetof<Block>();
+                prevBlock.size += (tailPtr - prevTailPtr);
                 dropItem(item);
                 droped = true;
             }
         }
         if (!droped) {
-            endPtr = changetype<usize>(item);
+            endPtr = blockPtr;
         }
     }
     let endBlock = changetype<Block>(endPtr);
-    if(changetype<usize>(endBlock.next) != changetype<usize>(freelist) && endBlock.size + offsetof<Block>() + endPtr == changetype<usize>(endBlock.next)) {
+    if (changetype<usize>(endBlock.next) != freeListPtr && endBlock.size + offsetof<Block>() + endPtr == changetype<usize>(endBlock.next)) {
         endBlock.size += (offsetof<Block>() + changetype<Block>(changetype<usize>(endBlock.next)).size);
         dropItem(endBlock.next);
     }
-
-    
-    // // defrag free list
-    // let prevPtr = 0;
-    // // log("--->looping");
-    // for (let item = changetype<LinkedList>(changetype<usize>(freelist.next));
-    //     changetype<usize>(item) != changetype<usize>(freelist) && item.next != null;
-    //     item = item.next) {
-    //     // logBlock(changetype<usize>(item));
-    //     if (prevPtr != 0) {
-    //         let prevBlock = changetype<Block>(prevPtr);
-    //         let thisBlock = changetype<Block>(changetype<usize>(item));
-    //         if ((prevBlock.size + offsetof<Block>() + prevPtr) > changetype<usize>(item)) {
-    //             log("error happened during merge->");
-    //             logBlock(prevPtr);
-    //             logBlock(changetype<usize>(item));
-    //             log("<-error happened during merge");
-    //             unreachable();
-    //         };
-    //         if ((prevBlock.size + offsetof<Block>() + prevPtr) == changetype<usize>(item)) {
-    //             prevBlock.size += (thisBlock.size + offsetof<Block>());
-    //             dropItem(changetype<LinkedList>(changetype<usize>(item)));
-    //             continue;
-    //         }
-    //         // if (changetype<usize>(item) - (prevBlock.size + offsetof<Block>() + prevPtr) < offsetof<Block>()) { // different pages, merge them
-    //         //     prevBlock.size += (changetype<usize>(item) - (prevBlock.size + offsetof<Block>() + prevPtr));
-    //         //     prevBlock.size += (thisBlock.size + offsetof<Block>());
-    //         //     dropItem(changetype<LinkedList>(changetype<usize>(item)));
-    //         //     continue;
-    //         // }
-    //     }
-    //     prevPtr = changetype<usize>(item);
-    // }
-    // let listSize = 0;
-    // log("~~~~~~~linked list~~~~~~~~~");
-    // for (let item = changetype<LinkedList>(changetype<usize>(freelist.next));
-    //     changetype<usize>(item) != changetype<usize>(freelist) && item.next != null;
-    //     item = item.next) {
-    //     logBlock(changetype<usize>(item));
-    //     listSize++;
-    // }
-    // logi(listSize);
-    // log("--------linked list--------");
 }

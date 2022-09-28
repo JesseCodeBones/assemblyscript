@@ -1,10 +1,9 @@
 (module
- (type $i32_=>_none (func (param i32)))
  (type $i32_=>_i32 (func (param i32) (result i32)))
+ (type $i32_=>_none (func (param i32)))
  (type $i32_i32_i32_i32_=>_none (func (param i32 i32 i32 i32)))
  (type $i32_i32_i32_=>_none (func (param i32 i32 i32)))
  (import "env" "abort" (func $~lib/builtins/abort (param i32 i32 i32 i32)))
- (import "env" "logi" (func $~lib/rt/env/logi (param i32)))
  (global $~lib/rt/freertos/freelist (mut i32) (i32.const 0))
  (memory $0 1)
  (data (i32.const 1036) "<")
@@ -30,7 +29,7 @@
   if
    i32.const 1056
    i32.const 1120
-   i32.const 128
+   i32.const 129
    i32.const 31
    call $~lib/builtins/abort
    unreachable
@@ -80,7 +79,7 @@
    memory.size $0
    i32.const 16
    i32.shl
-   i32.const 17560
+   i32.const 17568
    i32.sub
    i32.store $0
   end
@@ -322,13 +321,15 @@
   local.get $0
   i32.const 12
   i32.sub
+  local.set $2
+  i32.const 0
   local.set $0
   global.get $~lib/rt/freertos/freelist
   i32.load $0 offset=4
   local.set $1
   loop $for-loop|0
    local.get $1
-   global.get $~lib/rt/freertos/freelist
+   i32.const 1024
    i32.ne
    if (result i32)
     local.get $1
@@ -338,27 +339,27 @@
    end
    if
     block $for-break0
-     local.get $0
      local.get $1
-     i32.lt_u
+     local.get $2
+     i32.gt_u
      if
       local.get $1
       i32.load $0
-      local.set $2
+      local.set $0
       local.get $1
-      local.get $0
+      local.get $2
       i32.store $0
-      local.get $0
+      local.get $2
       local.get $1
       i32.store $0 offset=4
-      local.get $0
       local.get $2
+      local.get $0
       i32.store $0
-      local.get $2
       local.get $0
+      local.get $2
       i32.store $0 offset=4
       i32.const 1
-      local.set $2
+      local.set $0
       br $for-break0
      end
      local.get $1
@@ -368,34 +369,34 @@
     end
    end
   end
-  local.get $2
+  local.get $0
   i32.eqz
   if
    global.get $~lib/rt/freertos/freelist
-   local.tee $1
+   local.tee $0
    i32.load $0
-   local.set $2
-   local.get $1
+   local.set $1
    local.get $0
+   local.get $2
    i32.store $0
+   local.get $2
    local.get $0
-   local.get $1
    i32.store $0 offset=4
-   local.get $0
    local.get $2
+   local.get $1
    i32.store $0
+   local.get $1
    local.get $2
-   local.get $0
    i32.store $0 offset=4
   end
-  i32.const 0
+  i32.const 1024
   local.set $1
   global.get $~lib/rt/freertos/freelist
   i32.load $0 offset=4
   local.set $0
   loop $for-loop|1
    local.get $0
-   global.get $~lib/rt/freertos/freelist
+   i32.const 1024
    i32.ne
    if (result i32)
     local.get $0
@@ -404,150 +405,188 @@
     i32.const 0
    end
    if
-    block $for-continue|1
+    local.get $1
+    local.get $0
+    local.get $0
+    i32.load $0
+    local.tee $1
+    i32.const 1024
+    i32.ne
+    if (result i32)
      local.get $1
-     if
-      local.get $1
-      i32.load $0 offset=8
-      i32.const 12
-      i32.add
-      local.get $1
-      i32.add
-      local.get $0
-      i32.eq
-      if
-       local.get $1
-       local.get $1
-       i32.load $0 offset=8
-       local.get $0
-       i32.load $0 offset=8
-       i32.const 12
-       i32.add
-       i32.add
-       i32.store $0 offset=8
-       local.get $0
-       i32.load $0 offset=4
-       local.tee $2
-       i32.const 0
-       local.get $0
-       i32.load $0
-       local.tee $3
-       select
-       if
-        local.get $3
-        local.get $2
-        i32.store $0 offset=4
-        local.get $2
-        local.get $3
-        i32.store $0
-        local.get $0
-        i32.const 0
-        i32.store $0
-        local.get $0
-        i32.const 0
-        i32.store $0 offset=4
-       else
-        unreachable
-       end
-       br $for-continue|1
-      end
-      local.get $0
-      local.get $1
-      i32.load $0 offset=8
-      i32.const 12
-      i32.add
-      local.get $1
-      i32.add
-      i32.sub
-      i32.const 12
-      i32.lt_u
-      if
-       local.get $1
-       local.get $0
-       local.get $1
-       i32.load $0 offset=8
-       local.tee $2
-       i32.const 12
-       i32.add
-       local.get $1
-       i32.add
-       i32.sub
-       local.get $2
-       i32.add
-       i32.store $0 offset=8
-       local.get $1
-       local.get $1
-       i32.load $0 offset=8
-       local.get $0
-       i32.load $0 offset=8
-       i32.const 12
-       i32.add
-       i32.add
-       i32.store $0 offset=8
-       local.get $0
-       i32.load $0 offset=4
-       local.tee $2
-       i32.const 0
-       local.get $0
-       i32.load $0
-       local.tee $3
-       select
-       if
-        local.get $3
-        local.get $2
-        i32.store $0 offset=4
-        local.get $2
-        local.get $3
-        i32.store $0
-        local.get $0
-        i32.const 0
-        i32.store $0
-        local.get $0
-        i32.const 0
-        i32.store $0 offset=4
-       else
-        unreachable
-       end
-       br $for-continue|1
-      end
-     end
+     i32.load $0 offset=8
+     i32.const 12
+     i32.add
+     local.get $1
+     i32.add
      local.get $0
-     local.set $1
+     i32.eq
+     if (result i32)
+      local.get $1
+      local.get $0
+      i32.load $0 offset=8
+      local.get $1
+      i32.load $0 offset=8
+      i32.const 12
+      i32.add
+      i32.add
+      i32.store $0 offset=8
+      local.get $0
+      i32.load $0 offset=4
+      local.tee $2
+      i32.const 0
+      local.get $0
+      i32.load $0
+      local.tee $3
+      select
+      if
+       local.get $3
+       local.get $2
+       i32.store $0 offset=4
+       local.get $2
+       local.get $3
+       i32.store $0
+       local.get $0
+       i32.const 0
+       i32.store $0
+       local.get $0
+       i32.const 0
+       i32.store $0 offset=4
+      else
+       unreachable
+      end
+      i32.const 1
+     else
+      i32.const 0
+     end
+     local.set $2
+     local.get $1
+     local.get $1
+     i32.load $0 offset=8
+     i32.add
+     i32.const 12
+     i32.add
+     local.tee $3
+     i32.const 65535
+     i32.and
+     i32.eqz
+     local.get $0
+     local.get $3
+     i32.sub
+     i32.const 4
+     i32.sub
+     i32.const 12
+     i32.lt_u
+     i32.and
+     if (result i32)
+      local.get $1
+      local.get $1
+      i32.load $0 offset=8
+      local.get $0
+      local.get $0
+      i32.load $0 offset=8
+      i32.add
+      i32.const 12
+      i32.add
+      local.get $3
+      i32.sub
+      i32.add
+      i32.store $0 offset=8
+      local.get $0
+      i32.load $0 offset=4
+      local.tee $1
+      i32.const 0
+      local.get $0
+      i32.load $0
+      local.tee $2
+      select
+      if
+       local.get $2
+       local.get $1
+       i32.store $0 offset=4
+       local.get $1
+       local.get $2
+       i32.store $0
+       local.get $0
+       i32.const 0
+       i32.store $0
+       local.get $0
+       i32.const 0
+       i32.store $0 offset=4
+      else
+       unreachable
+      end
+      i32.const 1
+     else
+      local.get $2
+     end
+    else
+     i32.const 0
     end
+    select
+    local.set $1
     local.get $0
     i32.load $0 offset=4
     local.set $0
     br $for-loop|1
    end
   end
-  i32.const 0
-  local.set $0
-  global.get $~lib/rt/freertos/freelist
+  local.get $1
   i32.load $0 offset=4
-  local.set $1
-  loop $for-loop|2
+  i32.const 1024
+  i32.ne
+  if (result i32)
    local.get $1
-   global.get $~lib/rt/freertos/freelist
-   i32.ne
-   if (result i32)
-    local.get $1
-    i32.load $0 offset=4
-   else
-    i32.const 0
-   end
+   i32.load $0 offset=4
+   local.get $1
+   i32.load $0 offset=8
+   i32.const 12
+   i32.add
+   local.get $1
+   i32.add
+   i32.eq
+  else
+   i32.const 0
+  end
+  if
+   local.get $1
+   local.get $1
+   i32.load $0 offset=8
+   local.get $1
+   i32.load $0 offset=4
+   i32.load $0 offset=8
+   i32.const 12
+   i32.add
+   i32.add
+   i32.store $0 offset=8
+   local.get $1
+   i32.load $0 offset=4
+   local.tee $0
+   i32.load $0
+   local.set $1
+   local.get $0
+   i32.load $0 offset=4
+   local.tee $2
+   i32.const 0
+   local.get $1
+   select
    if
-    local.get $0
-    i32.const 1
-    i32.add
-    local.set $0
     local.get $1
-    i32.load $0 offset=4
-    local.set $1
-    br $for-loop|2
+    local.get $2
+    i32.store $0 offset=4
+    local.get $2
+    local.get $1
+    i32.store $0
+    local.get $0
+    i32.const 0
+    i32.store $0
+    local.get $0
+    i32.const 0
+    i32.store $0 offset=4
+   else
+    unreachable
    end
   end
-  local.get $0
-  call $~lib/rt/env/logi
  )
  (func $assembly/index/heap_free (param $0 i32)
   local.get $0
