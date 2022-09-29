@@ -73,7 +73,7 @@ function initialize(): void {
     freelist = changetype<LinkedList>(freeListPtr);
     freelist.next = freelist;
     freelist.prev = freelist;
-    const startPoint: usize = ((__heap_base + 2 * AL_SIZE) & ~AL_MASK) - offsetof<Block>();
+    const startPoint: usize = ((__heap_base + offsetof<Block>() + AL_SIZE) & ~AL_MASK) - offsetof<Block>();
     const pagesBefore = memory.size();
     const pagesNeeded = <i32>((((startPoint + 1) + 0xffff) & ~0xffff) >>> 16);
     if (pagesNeeded > pagesBefore && memory.grow(pagesNeeded - pagesBefore) < 0) unreachable();
@@ -134,6 +134,7 @@ function initialize(): void {
     }
 
     dropItem(block);
+
     return foundBlockPtr + offsetof<Block>();
 }
 
