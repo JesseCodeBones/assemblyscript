@@ -19,10 +19,10 @@ import { E_ALLOCATION_TOO_LARGE } from "../util/error";
     size: usize;
 }
 
-var freeListPtr: usize = memory.data(sizeof<LinkedList>());
+const freeListPtr: usize = memory.data(sizeof<LinkedList>());
 // var endPtr: usize = memory.data(sizeof<usize>()); // store the end ptr of the linear memory
 // @ts-ignore: decorator
-@lazy export var freelist: LinkedList;
+@lazy var freelist: LinkedList;
 // @ts-ignore: decorator
 @inline function alignUp(num: usize): usize {
     return ((num) + ((1 << alignof<usize>()) - 1)) & ~((1 << alignof<usize>()) - 1);
@@ -54,17 +54,17 @@ function growMemory(size: usize): void {
         unreachable();
         return;
     }
-    var pagesBefore = memory.size();
-    let startPoint = ((pagesBefore << 16) + offsetof<Block>());
-    let v128Alignment = AL_SIZE - ((startPoint) & <i32>AL_MASK);
+    const pagesBefore = memory.size();
+    const startPoint = ((pagesBefore << 16) + offsetof<Block>());
+    const v128Alignment = AL_SIZE - ((startPoint) & <i32>AL_MASK);
     size += startPoint + <i32>v128Alignment;
-    var pagesNeeded = <i32>(((size + 0xffff) & ~0xffff) >>> 16);
-    var pagesWanted = pagesNeeded - pagesBefore; // double memory
+    const pagesNeeded = <i32>(((size + 0xffff) & ~0xffff) >>> 16);
+    const pagesWanted = pagesNeeded - pagesBefore; // double memory
     if (memory.grow(pagesWanted) < 0) {
         unreachable();
     }
     let block = changetype<Block>((pagesBefore << 16) + <i32>v128Alignment);
-    var pagesAfter = memory.size();
+    const pagesAfter = memory.size();
     block.size = ((pagesAfter - pagesBefore) << 16) - offsetof<LinkedList>() - <i32>v128Alignment;
     insertItem(changetype<LinkedList>((pagesBefore << 16) + <i32>v128Alignment), freelist.prev, freelist);
 }
@@ -115,26 +115,19 @@ function initialize(): void {
     let block = changetype<Block>(foundBlockPtr);
     if (block.size - size > (8 + offsetof<LinkedList>())) { // divide linked list
         let newBlockPtr = foundBlockPtr + size + offsetof<Block>();
-        let v128Alignment = AL_SIZE - ((newBlockPtr + offsetof<Block>()) & AL_MASK); // align to 128 for new block
+        const v128Alignment = AL_SIZE - ((newBlockPtr + offsetof<Block>()) & AL_MASK); // align to 128 for new block
         size += v128Alignment;
         newBlockPtr += v128Alignment;
         if (!((newBlockPtr + 8) > (foundBlockPtr + block.size))) { // aligned ptr out of the bound of block
-            // log("divide block->");
-            // logBlock(foundBlockPtr);
             let newBlock = changetype<Block>(newBlockPtr);
             newBlock.size = block.size - size - offsetof<Block>();
             block.size = size;
-            // logBlock(foundBlockPtr);
-            // logBlock(newBlockPtr);
             insertItem(changetype<LinkedList>(newBlock),
                 changetype<LinkedList>(block),
                 changetype<LinkedList>(changetype<usize>(block.next)));
-            // log("<-divide block");
         }
     }
-
     dropItem(block);
-
     return foundBlockPtr + offsetof<Block>();
 }
 
@@ -148,13 +141,13 @@ function initialize(): void {
 @global @unsafe
     export function __free(ptr: usize): void {
     if (!ptr) unreachable(); // cannot be nullptr
-    let blockPtr = ptr - offsetof<Block>();
-    let blockLinkedList = changetype<LinkedList>(blockPtr);
-    var foundPos: bool = false;
+    const freeBlockPtr = ptr - offsetof<Block>();
+    let blockLinkedList = changetype<LinkedList>(freeBlockPtr);
+    let foundPos: bool = false;
     for (let item = changetype<LinkedList>(changetype<usize>(freelist.next));
         changetype<usize>(item) != freeListPtr && item.next != null;
         item = item.next) {
-        if (changetype<usize>(item) > blockPtr) {
+        if (changetype<usize>(item) > freeBlockPtr) {
             insertItem(blockLinkedList, item.prev, item);
             foundPos = true;
             break;
@@ -167,7 +160,7 @@ function initialize(): void {
     for (let item = changetype<LinkedList>(changetype<usize>(freelist.next));
         changetype<usize>(item) != freeListPtr && item.next != null;
         item = item.next) {
-        let blockPtr = changetype<usize>(item);
+        const blockPtr = changetype<usize>(item);
         let block = changetype<Block>(blockPtr);
         let droped = false;
         let prevPtr = changetype<usize>(item.prev);
