@@ -97,6 +97,21 @@ function initialize(): void {
     return foundBlockPtr;
 }
 
+function mergeBlock(prevPtr:usize, blockPtr:usize):bool {
+    let block = changetype<Block>(blockPtr);
+    if (prevPtr != freeListPtr && blockPtr != freeListPtr && prevPtr && blockPtr) {
+        let prevBlock = changetype<Block>(prevPtr);
+        const prevTailPtr = prevPtr + prevBlock.size + offsetof<Block>();
+        if (((blockPtr - prevTailPtr) < offsetof<Block>())) {
+            const tailPtr = changetype<usize>(block) + block.size + offsetof<Block>();
+            prevBlock.size += (tailPtr - prevTailPtr);
+            dropItem(changetype<LinkedList>(blockPtr));
+            return true;
+        }
+    }
+    return false;
+}
+
 // @ts-ignore: decorator
 @global @unsafe export function __alloc(size: usize): usize {
     size = alignUp(size);
@@ -161,33 +176,10 @@ function initialize(): void {
         changetype<usize>(item) != freeListPtr && item.next != null;
         item = item.next) {
         const blockPtr = changetype<usize>(item);
-        let block = changetype<Block>(blockPtr);
-        let droped = false;
-        let prevPtr = changetype<usize>(item.prev);
-        if (prevPtr != freeListPtr) {
-            let prevBlock = changetype<Block>(prevPtr);
-            if ((prevBlock.size + offsetof<Block>() + prevPtr) == blockPtr) {
-                prevBlock.size = (prevBlock.size + offsetof<Block>() + block.size);
-                dropItem(item);
-                droped = true;
-            }
-            let prevTailPtr = changetype<usize>(prevBlock) + prevBlock.size + offsetof<Block>();
-            if (prevTailPtr % (1 << 16) == 0 //page end
-                && ((blockPtr - prevTailPtr - 4) < offsetof<Block>()) // page begin
-            ) {
-                let tailPtr = changetype<usize>(block) + block.size + offsetof<Block>();
-                prevBlock.size += (tailPtr - prevTailPtr);
-                dropItem(item);
-                droped = true;
-            }
-        }
-        if (!droped) {
-            endPtr = blockPtr;
-        }
+        const prevPtr = changetype<usize>(item.prev);
+        if (mergeBlock(prevPtr, blockPtr)) continue;
+        endPtr = blockPtr;
     }
     let endBlock = changetype<Block>(endPtr);
-    if (changetype<usize>(endBlock.next) != freeListPtr && endBlock.size + offsetof<Block>() + endPtr == changetype<usize>(endBlock.next)) {
-        endBlock.size += (offsetof<Block>() + changetype<Block>(changetype<usize>(endBlock.next)).size);
-        dropItem(endBlock.next);
-    }
+    mergeBlock(endPtr, changetype<usize>(endBlock.next));
 }
