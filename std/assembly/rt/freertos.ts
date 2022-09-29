@@ -65,7 +65,7 @@ function growMemory(size: usize): void {
     }
     let block = changetype<Block>((pagesBefore << 16) + <i32>v128Alignment);
     const pagesAfter = memory.size();
-    block.size = ((pagesAfter - pagesBefore) << 16) - offsetof<LinkedList>() - <i32>v128Alignment;
+    block.size = ((pagesAfter - pagesBefore) << 16) - offsetof<Block>() - <i32>v128Alignment;
     insertItem(changetype<LinkedList>((pagesBefore << 16) + <i32>v128Alignment), freelist.prev, freelist);
 }
 
