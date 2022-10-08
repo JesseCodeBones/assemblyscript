@@ -1,4 +1,3 @@
-import { logi, log } from "./env";
 import { E_ALLOCATION_TOO_LARGE } from "../util/error";
 
 // @ts-ignore: decorator
@@ -55,7 +54,6 @@ const freeListPtr: usize = memory.data(sizeof<LinkedList>());
 function growMemory(size: usize): void {
     if (ASC_LOW_MEMORY_LIMIT) {
         unreachable();
-        return;
     }
     const pagesBefore = memory.size();
     const pageBeforePtr = pagesBefore << 16;
@@ -120,9 +118,7 @@ function mergeBlock(prevPtr: usize, blockPtr: usize): bool {
 @global @unsafe export function __alloc(size: usize): usize {
     size = alignUp(size);
     if (size > BLOCK_MAXSIZE) throw new Error(E_ALLOCATION_TOO_LARGE);
-    if (!freelist) {
-        initialize();
-    }
+    if (!freelist) initialize();
     let foundBlockPtr: usize = searchBlockPtr(size);
     if (!foundBlockPtr) { // found ptr
         growMemory(size);
@@ -148,12 +144,6 @@ function mergeBlock(prevPtr: usize, blockPtr: usize): bool {
     }
     dropItem(block);
     return foundBlockPtr + BLOCK_SIZE;
-}
-
-// @ts-ignore: decorator
-@global @unsafe
-    export function __realloc(ptr: usize, size: usize): usize {
-    return __alloc(size);
 }
 
 // @ts-ignore: decorator
@@ -185,4 +175,18 @@ function mergeBlock(prevPtr: usize, blockPtr: usize): bool {
     }
     let endBlock = changetype<Block>(endPtr);
     mergeBlock(endPtr, changetype<usize>(endBlock.next));
+}
+
+function moveBlock(block: Block, newSize: usize): usize {
+    const ptr = __alloc(newSize);
+    const prePtr = changetype<usize>(block) + BLOCK_SIZE;
+    memory.copy(ptr, prePtr, block.size);
+    if (prePtr > __heap_base) __free(prePtr);
+    return ptr;
+}
+
+// @ts-ignore: decorator
+@global @unsafe
+export function __realloc(ptr: usize, size: usize): usize {
+    return moveBlock(changetype<Block>(ptr - BLOCK_SIZE), size);
 }
