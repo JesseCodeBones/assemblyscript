@@ -21,6 +21,9 @@ import { E_ALLOCATION_TOO_LARGE } from "../util/error";
 // @ts-ignore: decorator
 @inline const BLOCK_SIZE: usize = offsetof<Block>();
 
+// @ts-ignore: decorator
+@inline const MIN_BLOCK_SIZE: usize = offsetof<usize>() + BLOCK_SIZE;
+
 const freeListPtr: usize = memory.data(sizeof<LinkedList>());
 // var endPtr: usize = memory.data(sizeof<usize>()); // store the end ptr of the linear memory
 // @ts-ignore: decorator
@@ -128,12 +131,12 @@ function mergeBlock(prevPtr: usize, blockPtr: usize): bool {
         }
     }
     let block = changetype<Block>(foundBlockPtr);
-    if (block.size - size > (offsetof<usize>() + BLOCK_SIZE)) { // divide linked list
+    if (block.size - size > MIN_BLOCK_SIZE) { // divide linked list
         let newBlockPtr = foundBlockPtr + size + BLOCK_SIZE;
         const v128Alignment = AL_SIZE - ((newBlockPtr + BLOCK_SIZE) & AL_MASK); // align to 128 for new block
         size += v128Alignment;
         newBlockPtr += v128Alignment;
-        if (!((newBlockPtr + 8) > (foundBlockPtr + block.size))) { // aligned ptr out of the bound of block
+        if (!((newBlockPtr + MIN_BLOCK_SIZE) > (foundBlockPtr + block.size))) { // aligned ptr out of the bound of block
             let newBlock = changetype<Block>(newBlockPtr);
             newBlock.size = block.size - size - BLOCK_SIZE;
             block.size = size;
