@@ -1,5 +1,9 @@
 import { E_ALLOCATION_TOO_LARGE } from "../util/error";
 
+function tryTruncateMemory(ptr: usize, size: usize) : bool {
+    return false;
+}
+
 // @ts-ignore: decorator
 @unmanaged class LinkedList {
     prev: LinkedList;
@@ -178,6 +182,12 @@ function mergeBlock(prevPtr: usize, blockPtr: usize): bool {
     }
     let endBlock = changetype<Block>(endPtr);
     mergeBlock(endPtr, changetype<usize>(endBlock.next));
+    // notify runtime that the end ptr of using block
+    const lastPtr = changetype<usize>(freelist.prev);
+    let latestFreeBlock = changetype<Block>(lastPtr);
+    if (latestFreeBlock.size + lastPtr + BLOCK_SIZE == (memory.size() << 16) && tryTruncateMemory(lastPtr, latestFreeBlock.size + BLOCK_SIZE)) {
+        dropItem(changetype<LinkedList>(lastPtr)); //drop the free ptr, because the memory released this block.
+    }
 }
 
 function moveBlock(block: Block, newSize: usize): usize {
