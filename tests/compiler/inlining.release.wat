@@ -134,11 +134,11 @@
    i32.shr_u
   else
    i32.const 31
-   local.get $2
    i32.const 1073741820
    local.get $2
+   local.get $2
    i32.const 1073741820
-   i32.lt_u
+   i32.ge_u
    select
    local.tee $2
    i32.clz
@@ -398,11 +398,11 @@
    i32.shr_u
   else
    i32.const 31
-   local.get $2
    i32.const 1073741820
    local.get $2
+   local.get $2
    i32.const 1073741820
-   i32.lt_u
+   i32.ge_u
    select
    local.tee $2
    i32.clz
@@ -1550,7 +1550,7 @@
    if
     i32.const 0
     i32.const 1056
-    i32.const 95
+    i32.const 96
     i32.const 3
     call $~lib/builtins/abort
     unreachable
@@ -1562,7 +1562,7 @@
    if
     i32.const 0
     i32.const 1056
-    i32.const 96
+    i32.const 97
     i32.const 3
     call $~lib/builtins/abort
     unreachable
@@ -1574,7 +1574,7 @@
    if
     i32.const 0
     i32.const 1056
-    i32.const 97
+    i32.const 98
     i32.const 3
     call $~lib/builtins/abort
     unreachable
@@ -1586,7 +1586,7 @@
    if
     i32.const 0
     i32.const 1056
-    i32.const 98
+    i32.const 99
     i32.const 3
     call $~lib/builtins/abort
     unreachable

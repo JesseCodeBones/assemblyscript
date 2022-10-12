@@ -117,7 +117,8 @@ import {
 import {
   Module,
   FunctionRef,
-  MemorySegment
+  MemorySegment,
+  getFunctionName
 } from "./module";
 
 import {
@@ -812,6 +813,20 @@ export class Program extends DiagnosticEmitter {
     return this.blockOverhead + this.objectOverhead;
   }
 
+  searchFunctionByRef(ref: FunctionRef): Function | null {
+    const modifiedFunctionName = getFunctionName(ref);
+    if (modifiedFunctionName) {
+      const instancesByName = this.instancesByName;
+      if (instancesByName.has(modifiedFunctionName)) {
+        const element = assert(instancesByName.get(modifiedFunctionName));
+        if (element.kind == ElementKind.FUNCTION) {
+          return <Function>element;
+        }
+      }
+    }
+    return null;
+  }
+
   /** Computes the next properly aligned offset of a memory manager block, given the current bump offset. */
   computeBlockStart(currentOffset: i32): i32 {
     var blockOverhead = this.blockOverhead;
@@ -1015,6 +1030,10 @@ export class Program extends DiagnosticEmitter {
     this.registerNativeType(CommonNames.eqref, Type.eqref);
     this.registerNativeType(CommonNames.i31ref, Type.i31ref);
     this.registerNativeType(CommonNames.dataref, Type.dataref);
+    this.registerNativeType(CommonNames.stringref, Type.stringref);
+    this.registerNativeType(CommonNames.stringview_wtf8, Type.stringview_wtf8);
+    this.registerNativeType(CommonNames.stringview_wtf16, Type.stringview_wtf16);
+    this.registerNativeType(CommonNames.stringview_iter, Type.stringview_iter);
 
     // register compiler hints
     this.registerConstantInteger(CommonNames.ASC_TARGET, Type.i32,
@@ -1067,12 +1086,12 @@ export class Program extends DiagnosticEmitter {
       i64_new(options.hasFeature(Feature.GC) ? 1 : 0, 0));
     this.registerConstantInteger(CommonNames.ASC_FEATURE_MEMORY64, Type.bool,
       i64_new(options.hasFeature(Feature.MEMORY64) ? 1 : 0, 0));
-    this.registerConstantInteger(CommonNames.ASC_FEATURE_FUNCTION_REFERENCES, Type.bool,
-      i64_new(options.hasFeature(Feature.FUNCTION_REFERENCES) ? 1 : 0, 0));
     this.registerConstantInteger(CommonNames.ASC_FEATURE_RELAXED_SIMD, Type.bool,
       i64_new(options.hasFeature(Feature.RELAXED_SIMD) ? 1 : 0, 0));
     this.registerConstantInteger(CommonNames.ASC_FEATURE_EXTENDED_CONST, Type.bool,
-      i64_new(options.hasFeature(Feature.EXTENDED_CONST)? 1 : 0, 0));
+      i64_new(options.hasFeature(Feature.EXTENDED_CONST) ? 1 : 0, 0));
+    this.registerConstantInteger(CommonNames.ASC_FEATURE_STRINGREF, Type.bool,
+      i64_new(options.hasFeature(Feature.STRINGREF) ? 1 : 0, 0));
 
     // remember deferred elements
     var queuedImports = new Array<QueuedImport>();
@@ -1348,6 +1367,41 @@ export class Program extends DiagnosticEmitter {
       }
     }
 
+    // check override
+    for (let i = 0, k = queuedExtends.length; i < k; i++) {
+      let prototype = queuedExtends[i];
+      let instanesMembers = prototype.instanceMembers;
+      if (instanesMembers) {
+        let members = Map_values(instanesMembers);
+        for (let j = 0, k = members.length; j < k; j++) {
+          let member = members[j];
+          let declaration = member.declaration;
+          if (declaration.is(CommonFlags.OVERRIDE)) {
+            let basePrototype = prototype.basePrototype;
+            let hasOverride = false;
+            while (basePrototype) {
+              let instanceMembers = basePrototype.instanceMembers;
+              if (instanceMembers) {
+                if (instanceMembers.has(member.name)) {
+                  hasOverride = true;
+                  break;
+                }
+              }
+              basePrototype = basePrototype.basePrototype;
+            }
+            if (!hasOverride) {
+              let basePrototype = assert(prototype.basePrototype);
+              this.error(
+                DiagnosticCode.This_member_cannot_have_an_override_modifier_because_it_is_not_declared_in_the_base_class_0,
+                declaration.name.range,
+                basePrototype.name
+              );
+            }
+          }
+        }
+      }
+    }
+
     // resolve prototypes of implemented interfaces
     for (let i = 0, k = queuedImplements.length; i < k; ++i) {
       let thisPrototype = queuedImplements[i];
@@ -1449,11 +1503,12 @@ export class Program extends DiagnosticEmitter {
     // TODO: make this work with interfaaces as well
     var thisInstanceMembers = thisPrototype.instanceMembers;
     if (thisInstanceMembers) {
+      let thisMembers = Map_values(thisInstanceMembers);
       do {
         let baseInstanceMembers = basePrototype.instanceMembers;
         if (baseInstanceMembers) {
-          for (let _values = Map_values(thisInstanceMembers), j = 0, l = _values.length; j < l; ++j) {
-            let thisMember = _values[j];
+          for (let j = 0, l = thisMembers.length; j < l; ++j) {
+            let thisMember = thisMembers[j];
             if (
               !thisMember.isAny(CommonFlags.CONSTRUCTOR | CommonFlags.PRIVATE) &&
               baseInstanceMembers.has(thisMember.name)
@@ -1530,12 +1585,6 @@ export class Program extends DiagnosticEmitter {
                   }
                 }
               }
-            }
-            if (thisMember.is(CommonFlags.OVERRIDE) && !baseInstanceMembers.has(thisMember.name)) {
-              this.error(
-                DiagnosticCode.This_member_cannot_have_an_override_modifier_because_it_is_not_declared_in_the_base_class_0,
-                thisMember.identifierNode.range, basePrototype.name
-              );
             }
           }
         }
@@ -2958,10 +3007,30 @@ export abstract class DeclaredElement extends Element {
   isCompatibleOverride(base: DeclaredElement): bool {
     var self: DeclaredElement = this; // TS
     var kind = self.kind;
+    var checkCompatibleOverride = false;
     if (kind == base.kind) {
       switch (kind) {
+        case ElementKind.FUNCTION_PROTOTYPE : {
+          let selfFunction = this.program.resolver.resolveFunction(<FunctionPrototype>self, null);
+          if (!selfFunction) return false;
+          let baseFunction = this.program.resolver.resolveFunction(<FunctionPrototype>base, null);
+          if (!baseFunction) return false;
+          self = selfFunction;
+          base = baseFunction;
+          checkCompatibleOverride = true;
+          // fall-through
+        }
         case ElementKind.FUNCTION: {
-          return (<Function>self).signature.isAssignableTo((<Function>base).signature);
+          return (<Function>self).signature.isAssignableTo((<Function>base).signature, checkCompatibleOverride);
+        }
+        case ElementKind.PROPERTY_PROTOTYPE: {
+          let selfProperty = this.program.resolver.resolveProperty(<PropertyPrototype>self);
+          if (!selfProperty) return false;
+          let baseProperty = this.program.resolver.resolveProperty(<PropertyPrototype>base);
+          if (!baseProperty) return false;
+          self = selfProperty;
+          base = baseProperty;
+          // fall-through
         }
         case ElementKind.PROPERTY: {
           let selfProperty = <Property>self;
@@ -2969,7 +3038,7 @@ export abstract class DeclaredElement extends Element {
           let selfGetter = selfProperty.getterInstance;
           let baseGetter = baseProperty.getterInstance;
           if (selfGetter) {
-            if (!baseGetter || !selfGetter.signature.isAssignableTo(baseGetter.signature)) {
+            if (!baseGetter || !selfGetter.signature.isAssignableTo(baseGetter.signature, true)) {
               return false;
             }
           } else if (baseGetter) {
@@ -2978,7 +3047,7 @@ export abstract class DeclaredElement extends Element {
           let selfSetter = selfProperty.setterInstance;
           let baseSetter = baseProperty.setterInstance;
           if (selfSetter) {
-            if (!baseSetter || !selfSetter.signature.isAssignableTo(baseSetter.signature)) {
+            if (!baseSetter || !selfSetter.signature.isAssignableTo(baseSetter.signature, true)) {
               return false;
             }
           } else if (baseSetter) {
@@ -2986,6 +3055,10 @@ export abstract class DeclaredElement extends Element {
           }
           return true;
         }
+        // TODO: Implement properties overriding fields and vice-versa. Challenge is that anything overridable requires
+        // a virtual stub, but fields aren't functions. Either all (such) fields should become property-like, with a
+        // getter and a setter that can participate as a virtual stub, or it's allowed one-way, with fields integrated
+        // into what can be a virtual stub as get=load and set=store, then not necessarily with own accessor functions.
       }
     }
     return false;
@@ -3759,6 +3832,10 @@ export class Function extends TypedElement {
     this.breakStack = breakStack = null;
     this.breakLabel = null;
     this.tempI32s = this.tempI64s = this.tempF32s = this.tempF64s = null;
+    this.addDebugInfo(module, ref);
+  }
+
+  addDebugInfo(module: Module, ref: FunctionRef): void {
     if (this.program.options.sourceMap) {
       let debugLocations = this.debugLocations;
       for (let i = 0, k = debugLocations.length; i < k; ++i) {
@@ -3909,7 +3986,7 @@ export class Field extends VariableLikeElement {
   get internalSetterSignature(): Signature {
     var cached = this._internalSetterSignature;
     if (!cached) {
-      this._internalGetterSignature = cached = new Signature(this.program, [ this.type ], Type.void, this.thisType);
+      this._internalSetterSignature = cached = new Signature(this.program, [ this.type ], Type.void, this.thisType);
     }
     return cached;
   }
@@ -4239,6 +4316,11 @@ export class Class extends TypedElement {
       this.lookupOverload(OperatorKind.INDEXED_GET) != null ||
       this.lookupOverload(OperatorKind.UNCHECKED_INDEXED_GET) != null
     );
+  }
+
+  /** Tests if this is an interface. */
+  get isInterface(): bool {
+    return this.kind == ElementKind.INTERFACE;
   }
 
   /** Constructs a new class. */

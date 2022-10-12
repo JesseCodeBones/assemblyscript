@@ -71,6 +71,14 @@ export const enum TypeKind {
   I31REF,
   /** Data reference. */
   DATAREF,
+  /** String reference. */
+  STRINGREF,
+  /** WTF8 string view. */
+  STRINGVIEW_WTF8,
+  /** WTF16 string view. */
+  STRINGVIEW_WTF16,
+  /** String iterator. */
+  STRINGVIEW_ITER,
 
   // other
 
@@ -494,6 +502,27 @@ export class Type {
     return this.kind == target.kind;
   }
 
+  /** Tests if this type can extend or implement the given type. */
+  canExtendOrImplement(base: Type): bool {
+    // Both must be class types
+    var thisClass = this.getClass();
+    var baseClass = base.getClass();
+    if (!thisClass || !baseClass) return false;
+    // Both types must be either managed or unmanaged
+    if (this.isManaged != base.isManaged) return false;
+    // Both types must be either internal or external references
+    if (this.isInternalReference) {
+      if (!base.isInternalReference) return false;
+    } else if (this.isExternalReference) {
+      if (!base.isExternalReference) return false;
+    } else {
+      return false;
+    }
+    // Interfaces can only extend interfaces
+    if (thisClass.isInterface && !baseClass.isInterface) return false;
+    return true;
+  }
+
   /** Determines the common denominator type of two types, if there is any. */
   static commonDenominator(left: Type, right: Type, signednessIsImportant: bool): Type | null {
     if (right.isAssignableTo(left, signednessIsImportant)) return left;
@@ -540,6 +569,10 @@ export class Type {
       case TypeKind.EQREF: return "eqref";
       case TypeKind.I31REF: return "i31ref";
       case TypeKind.DATAREF: return "dataref";
+      case TypeKind.STRINGREF: return "stringref";
+      case TypeKind.STRINGVIEW_WTF8: return "stringview_wtf8";
+      case TypeKind.STRINGVIEW_WTF16: return "stringview_wtf16";
+      case TypeKind.STRINGVIEW_ITER: return "stringview_iter";
       default: assert(false);
       case TypeKind.VOID: return "void";
     }
@@ -572,6 +605,10 @@ export class Type {
       case TypeKind.EQREF: return TypeRef.Eqref;
       case TypeKind.I31REF: return TypeRef.I31ref;
       case TypeKind.DATAREF: return TypeRef.Dataref;
+      case TypeKind.STRINGREF: return TypeRef.Stringref;
+      case TypeKind.STRINGVIEW_WTF8: return TypeRef.StringviewWTF8;
+      case TypeKind.STRINGVIEW_WTF16: return TypeRef.StringviewWTF16;
+      case TypeKind.STRINGVIEW_ITER: return TypeRef.StringviewIter;
       case TypeKind.VOID: return TypeRef.None;
     }
   }
@@ -745,6 +782,34 @@ export class Type {
     TypeFlags.REFERENCE, 0
   );
 
+  /** String reference. */
+  static readonly stringref: Type = new Type(TypeKind.STRINGREF,
+    TypeFlags.EXTERNAL   |
+    TypeFlags.NULLABLE   |
+    TypeFlags.REFERENCE, 0
+  );
+
+  /** WTF8 string view. */
+  static readonly stringview_wtf8: Type = new Type(TypeKind.STRINGVIEW_WTF8,
+    TypeFlags.EXTERNAL   |
+    TypeFlags.NULLABLE   |
+    TypeFlags.REFERENCE, 0
+  );
+
+  /** WTF16 string view. */
+  static readonly stringview_wtf16: Type = new Type(TypeKind.STRINGVIEW_WTF16,
+    TypeFlags.EXTERNAL   |
+    TypeFlags.NULLABLE   |
+    TypeFlags.REFERENCE, 0
+  );
+
+  /** String iterator. */
+  static readonly stringview_iter: Type = new Type(TypeKind.STRINGVIEW_ITER,
+    TypeFlags.EXTERNAL   |
+    TypeFlags.NULLABLE   |
+    TypeFlags.REFERENCE, 0
+  );
+
   /** No return type. */
   static readonly void: Type = new Type(TypeKind.VOID, TypeFlags.NONE, 0);
 
@@ -882,17 +947,27 @@ export class Signature {
   }
 
   /** Tests if a value of this function type is assignable to a target of the specified function type. */
-  isAssignableTo(target: Signature): bool {
-
-    // check `this` type
+  isAssignableTo(target: Signature, checkCompatibleOverride: bool = false): bool {
     var thisThisType = this.thisType;
     var targetThisType = target.thisType;
-    if (thisThisType) {
-      if (!targetThisType || !thisThisType.isAssignableTo(targetThisType)) {
+    if (!checkCompatibleOverride) {
+      // check exact `this` type
+      if (thisThisType) {
+        if (!targetThisType || !thisThisType.isAssignableTo(targetThisType)) {
+          return false;
+        }
+      } else if (targetThisType) {
         return false;
       }
-    } else if (targetThisType) {
-      return false;
+    } else {
+      // check kind of `this` type
+      if (thisThisType) {
+        if (!targetThisType || !thisThisType.canExtendOrImplement(targetThisType)) {
+          return false;
+        }
+      } else if (targetThisType) {
+        return false;
+      }
     }
 
     // check rest parameter
