@@ -1,6 +1,6 @@
 import { E_ALLOCATION_TOO_LARGE } from "../util/error";
 
-function tryTruncateMemory(ptr: usize, size: usize) : bool {
+function notifyMemoryChange(ptr: usize, size: usize) : bool {
     return false;
 }
 
@@ -29,6 +29,11 @@ function tryTruncateMemory(ptr: usize, size: usize) : bool {
 @inline const MIN_BLOCK_SIZE: usize = offsetof<usize>() + BLOCK_SIZE;
 
 const freeListPtr: usize = memory.data(sizeof<LinkedList>());
+// export var objectCountPtr: usize = memory.data(sizeof<i32>()); // store objects count
+// i32.store(objectCountPtr, 0);
+// const memoryMaxSizePtr: usize = memory.data(sizeof<i32>());
+// i32.store(memoryMaxSizePtr, <i32>__heap_base);
+
 // var endPtr: usize = memory.data(sizeof<usize>()); // store the end ptr of the linear memory
 // @ts-ignore: decorator
 @lazy var freelist: LinkedList;
@@ -95,15 +100,14 @@ function initialize(): void {
 
 // @ts-ignore: decorator
 @inline function searchBlockPtr(size: usize): usize {
-    let foundBlockPtr: usize = 0;
     for (let item = changetype<LinkedList>(changetype<usize>(freelist.next));
         changetype<usize>(item) != freeListPtr && item.next != null;
         item = item.next) {
         if (changetype<Block>(item).size > size) {
-            foundBlockPtr = changetype<usize>(item);
+            return changetype<usize>(item);
         }
     }
-    return foundBlockPtr;
+    return 0;
 }
 
 function mergeBlock(prevPtr: usize, blockPtr: usize): bool {
@@ -150,6 +154,26 @@ function mergeBlock(prevPtr: usize, blockPtr: usize): bool {
         }
     }
     dropItem(block);
+    // let oc = load<i32>(objectCountPtr);
+    // i32.store(objectCountPtr, oc + 1);
+    notifyMemoryChange(foundBlockPtr, BLOCK_SIZE + block.size);
+    // const lastPtr = changetype<usize>(freelist.prev);
+    // let latestFreeBlock = changetype<Block>(lastPtr);
+    // if (latestFreeBlock.size + lastPtr + BLOCK_SIZE == (memory.size() << 16) && notifyMemoryChange(lastPtr, latestFreeBlock.size + BLOCK_SIZE, false)) {
+    //     i32.store(memoryMaxSizePtr, <i32>lastPtr);
+    // } else {
+    //     i32.store(memoryMaxSizePtr, <i32>(memory.size() << 16));
+    // }
+    // i32.store(memoryMaxSizePtr, <i32>lastPtr);
+    // let freeCount = 0;
+    // for (let item = changetype<LinkedList>(changetype<usize>(freelist.next));
+    //     changetype<usize>(item) != freeListPtr && item.next != null;
+    //     item = item.next) {
+    //     if (changetype<Block>(item).size > size) {
+    //         foundBlockPtr = changetype<usize>(item);
+    //     }
+    // }
+
     return foundBlockPtr + BLOCK_SIZE;
 }
 
@@ -185,9 +209,11 @@ function mergeBlock(prevPtr: usize, blockPtr: usize): bool {
     // notify runtime that the end ptr of using block
     const lastPtr = changetype<usize>(freelist.prev);
     let latestFreeBlock = changetype<Block>(lastPtr);
-    if (latestFreeBlock.size + lastPtr + BLOCK_SIZE == (memory.size() << 16) && tryTruncateMemory(lastPtr, latestFreeBlock.size + BLOCK_SIZE)) {
+    if (latestFreeBlock.size + lastPtr + BLOCK_SIZE == (memory.size() << 16) && notifyMemoryChange(lastPtr, latestFreeBlock.size + BLOCK_SIZE)) {
         dropItem(changetype<LinkedList>(lastPtr)); //drop the free ptr, because the memory released this block.
     }
+    // let oc = load<i32>(objectCountPtr);
+    // i32.store(objectCountPtr, oc - 1);
 }
 
 function moveBlock(block: Block, newSize: usize): usize {
@@ -202,4 +228,5 @@ function moveBlock(block: Block, newSize: usize): usize {
 @global @unsafe
 export function __realloc(ptr: usize, size: usize): usize {
     return moveBlock(changetype<Block>(ptr - BLOCK_SIZE), size);
+    // return <usize>i32.load(memoryMaxSizePtr);
 }
