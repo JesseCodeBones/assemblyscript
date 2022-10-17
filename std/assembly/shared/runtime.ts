@@ -8,4 +8,6 @@ export enum Runtime {
   Minimal = 1,
   /** incremental GC. */
   Incremental = 2,
+  /** customize runtime path */
+  Customize = 3,
 }

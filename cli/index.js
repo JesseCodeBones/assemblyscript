@@ -303,6 +303,11 @@ export async function main(argv, options) {
     /* incremental */
     default: runtime = 2; break;
   }
+  if (fs.existsSync(opts.runtime) && fs.lstatSync(opts.runtime).isFile()) {
+    // customize runtime
+    runtime = 3;
+  }
+
   assemblyscript.setTarget(compilerOptions, 0);
   assemblyscript.setDebugInfo(compilerOptions, !!opts.debug);
   assemblyscript.setRuntime(compilerOptions, runtime);
@@ -633,20 +638,31 @@ export async function main(argv, options) {
 
   // Include runtime before entry files so its setup runs first
   {
-    let runtimeName = String(opts.runtime);
-    let runtimePath = `rt/index-${runtimeName}`;
-    let runtimeText = libraryFiles[runtimePath];
-    if (runtimeText == null) {
-      runtimePath = runtimeName;
-      runtimeText = await readFile(runtimePath + extension, baseDir);
-      if (runtimeText == null) return prepareResult(Error(`Runtime '${runtimeName}' not found.`));
-    } else {
-      runtimePath = `~lib/${runtimePath}`;
+    if (runtime == 3) { // customize run time
+      let runtimeText = await readFile(opts.runtime);
+      if (runtimeText == null) {
+        return prepareResult(Error(`Runtime '${runtimeName}' not found.`));
+      }
+      let begin = stats.begin();
+      stats.parseCount++;
+      assemblyscript.parse(program, runtimeText, opts.runtime, true);
+      stats.parseTime += stats.end(begin);
+    }  else {
+      let runtimeName = String(opts.runtime);
+      let runtimePath = `rt/index-${runtimeName}`;
+      let runtimeText = libraryFiles[runtimePath];
+      if (runtimeText == null) {
+        runtimePath = runtimeName;
+        runtimeText = await readFile(runtimePath + extension, baseDir);
+        if (runtimeText == null) return prepareResult(Error(`Runtime '${runtimeName}' not found.`));
+      } else {
+        runtimePath = `~lib/${runtimePath}`;
+      }
+      let begin = stats.begin();
+      stats.parseCount++;
+      assemblyscript.parse(program, runtimeText, runtimePath + extension, true);
+      stats.parseTime += stats.end(begin);
     }
-    let begin = stats.begin();
-    stats.parseCount++;
-    assemblyscript.parse(program, runtimeText, runtimePath + extension, true);
-    stats.parseTime += stats.end(begin);
   }
 
   // Include entry files
