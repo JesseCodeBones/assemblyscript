@@ -133,7 +133,7 @@ function memoryChangeHook(): void {
 	const lastPtr = changetype<usize>(freelist.prev);
 	const latestFreeBlock = changetype<Block>(lastPtr);
 	if (latestFreeBlock.size + lastPtr + BLOCK_SIZE == (memory.size() << 16)) {
-		notifyMemoryChange(lastPtr + latestFreeBlock.size + BLOCK_SIZE);
+		notifyMemoryChange(lastPtr - 1);
 	} else {
 		notifyMemoryChange(<usize>(memory.size() << 16));
 	}
