@@ -638,19 +638,18 @@ export async function main(argv, options) {
 
   // Include runtime before entry files so its setup runs first
   {
+    let runtimeName = String(opts.runtime);
+    let runtimePath = null;
+    let runtimeText = null;
     if (runtime == 3) { // customize run time
-      let runtimeText = await readFile(opts.runtime);
+      runtimeText = await readFile(runtimeName);
       if (runtimeText == null) {
         return prepareResult(Error(`Runtime '${runtimeName}' not found.`));
       }
-      let begin = stats.begin();
-      stats.parseCount++;
-      assemblyscript.parse(program, runtimeText, opts.runtime, true);
-      stats.parseTime += stats.end(begin);
+      runtimePath = opts.runtime;
     }  else {
-      let runtimeName = String(opts.runtime);
-      let runtimePath = `rt/index-${runtimeName}`;
-      let runtimeText = libraryFiles[runtimePath];
+      runtimePath = `rt/index-${runtimeName}`;
+      runtimeText = libraryFiles[runtimePath];
       if (runtimeText == null) {
         runtimePath = runtimeName;
         runtimeText = await readFile(runtimePath + extension, baseDir);
@@ -658,11 +657,11 @@ export async function main(argv, options) {
       } else {
         runtimePath = `~lib/${runtimePath}`;
       }
-      let begin = stats.begin();
-      stats.parseCount++;
-      assemblyscript.parse(program, runtimeText, runtimePath + extension, true);
-      stats.parseTime += stats.end(begin);
     }
+    let begin = stats.begin();
+    stats.parseCount++;
+    assemblyscript.parse(program, runtimeText, runtimePath, true);
+    stats.parseTime += stats.end(begin);
   }
 
   // Include entry files
