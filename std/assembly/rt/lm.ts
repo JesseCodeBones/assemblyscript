@@ -1,6 +1,6 @@
-import { E_ALLOCATION_TOO_LARGE } from "../util/error";
+const E_ALLOCATION_TOO_LARGE: string = "Allocation too large";
 
-function notifyMemoryChange(ptr: usize, size: usize) : bool {
+function notifyMemoryChange(ptr: usize): bool {
     return false;
 }
 
@@ -125,6 +125,16 @@ function mergeBlock(prevPtr: usize, blockPtr: usize): bool {
     return false;
 }
 
+function memoryChangeHook(): void {
+    const lastPtr = changetype<usize>(freelist.prev);
+    const latestFreeBlock = changetype<Block>(lastPtr);
+    if (latestFreeBlock.size + lastPtr + BLOCK_SIZE == (memory.size() << 16)) {
+        notifyMemoryChange(lastPtr + latestFreeBlock.size + BLOCK_SIZE);
+    } else {
+        notifyMemoryChange(<usize>(memory.size() << 16));
+    }
+}
+
 // @ts-ignore: decorator
 @global @unsafe export function __alloc(size: usize): usize {
     size = alignUp(size);
@@ -156,7 +166,7 @@ function mergeBlock(prevPtr: usize, blockPtr: usize): bool {
     dropItem(block);
     // let oc = load<i32>(objectCountPtr);
     // i32.store(objectCountPtr, oc + 1);
-    notifyMemoryChange(foundBlockPtr, BLOCK_SIZE + block.size);
+    memoryChangeHook();
     // const lastPtr = changetype<usize>(freelist.prev);
     // let latestFreeBlock = changetype<Block>(lastPtr);
     // if (latestFreeBlock.size + lastPtr + BLOCK_SIZE == (memory.size() << 16) && notifyMemoryChange(lastPtr, latestFreeBlock.size + BLOCK_SIZE, false)) {
@@ -207,11 +217,7 @@ function mergeBlock(prevPtr: usize, blockPtr: usize): bool {
     let endBlock = changetype<Block>(endPtr);
     mergeBlock(endPtr, changetype<usize>(endBlock.next));
     // notify runtime that the end ptr of using block
-    const lastPtr = changetype<usize>(freelist.prev);
-    let latestFreeBlock = changetype<Block>(lastPtr);
-    if (latestFreeBlock.size + lastPtr + BLOCK_SIZE == (memory.size() << 16) && notifyMemoryChange(lastPtr, latestFreeBlock.size + BLOCK_SIZE)) {
-        dropItem(changetype<LinkedList>(lastPtr)); //drop the free ptr, because the memory released this block.
-    }
+    memoryChangeHook();
     // let oc = load<i32>(objectCountPtr);
     // i32.store(objectCountPtr, oc - 1);
 }
@@ -226,7 +232,7 @@ function moveBlock(block: Block, newSize: usize): usize {
 
 // @ts-ignore: decorator
 @global @unsafe
-export function __realloc(ptr: usize, size: usize): usize {
+    export function __realloc(ptr: usize, size: usize): usize {
     return moveBlock(changetype<Block>(ptr - BLOCK_SIZE), size);
     // return <usize>i32.load(memoryMaxSizePtr);
 }
