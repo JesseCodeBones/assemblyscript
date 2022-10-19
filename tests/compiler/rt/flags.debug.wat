@@ -7,6 +7,7 @@
  (global $~lib/shared/runtime/Runtime.Stub i32 (i32.const 0))
  (global $~lib/shared/runtime/Runtime.Minimal i32 (i32.const 1))
  (global $~lib/shared/runtime/Runtime.Incremental i32 (i32.const 2))
+ (global $~lib/shared/runtime/Runtime.Customize i32 (i32.const 3))
  (global $rt/flags/VALUE_ALIGN_REF i32 (i32.const 256))
  (global $rt/flags/KEY_ALIGN_REF i32 (i32.const 131072))
  (global $~lib/rt/__rtti_base i32 (i32.const 176))

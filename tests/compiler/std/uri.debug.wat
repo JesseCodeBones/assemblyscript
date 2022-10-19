@@ -13,6 +13,7 @@
  (global $~lib/shared/runtime/Runtime.Stub i32 (i32.const 0))
  (global $~lib/shared/runtime/Runtime.Minimal i32 (i32.const 1))
  (global $~lib/shared/runtime/Runtime.Incremental i32 (i32.const 2))
+ (global $~lib/shared/runtime/Runtime.Customize i32 (i32.const 3))
  (global $~lib/util/uri/URL_UNSAFE i32 (i32.const 44))
  (global $~lib/rt/itcms/total (mut i32) (i32.const 0))
  (global $~lib/rt/itcms/threshold (mut i32) (i32.const 0))
